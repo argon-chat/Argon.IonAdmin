@@ -27,6 +27,14 @@ service AdminConsole() {
     ChangeEmail(userId: guid, newEmail: string): UserActionResult;
     
     GetDiagnostics(): DiagnosticsResult;
+    
+    GetOperators(): OperatorList;
+    GetOperatorDetails(operatorId: guid): OperatorDetails;
+    CreateOperator(input: CreateOperatorInput): CreateOperatorResult;
+    DeactivateOperator(operatorId: guid): OperatorActionResult;
+    ActivateOperator(operatorId: guid): OperatorActionResult;
+    RevokeOperatorCertificate(operatorId: guid): OperatorActionResult;
+    EnrollOperatorCertificate(operatorId: guid, csrPem: string): EnrollCertificateResult;
 }
 
 msg SearchUserResult {
@@ -357,5 +365,61 @@ msg OrleansDiagnostics {
     totalGrains: i4;
     activationCount: i4;
     isHealthy: bool;
+    error: string?;
+}
+
+
+msg OperatorList {
+    operators: OperatorInfo[];
+}
+
+msg OperatorInfo {
+    operatorId: guid;
+    displayName: string;
+    email: string;
+    userId: guid?;
+    isActive: bool;
+    certificate: OperatorCertificateInfo?;
+    lastAuthAt: datetime?;
+    createdAt: datetime;
+}
+
+msg OperatorCertificateInfo {
+    serialNumber: string;
+    thumbprint: string;
+    subject: string;
+    notBefore: datetime;
+    notAfter: datetime;
+    isExpired: bool;
+}
+
+msg OperatorDetails {
+    info: OperatorInfo;
+    linkedUsername: string?;
+}
+
+msg CreateOperatorInput {
+    displayName: string;
+    email: string;
+    userId: guid?;
+}
+
+msg CreateOperatorResult {
+    success: bool;
+    operatorId: guid?;
+    error: string?;
+}
+
+msg OperatorActionResult {
+    success: bool;
+    error: string?;
+}
+
+msg EnrollCertificateResult {
+    success: bool;
+    certificatePem: string?;
+    caChainPem: string?;
+    serialNumber: string?;
+    notAfter: datetime?;
     error: string?;
 }

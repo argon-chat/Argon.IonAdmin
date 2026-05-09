@@ -1168,6 +1168,209 @@
         }
       ]
     },
+    "OperatorList": {
+      "kind": "Msg",
+      "nextIndex": 1,
+      "fields": [
+        {
+          "index": 0,
+          "name": "operators",
+          "type": "Array\u003COperatorInfo\u003E"
+        }
+      ]
+    },
+    "OperatorInfo": {
+      "kind": "Msg",
+      "nextIndex": 8,
+      "fields": [
+        {
+          "index": 0,
+          "name": "operatorId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "displayName",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "email",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "userId",
+          "type": "Maybe\u003Cguid\u003E"
+        },
+        {
+          "index": 4,
+          "name": "isActive",
+          "type": "bool"
+        },
+        {
+          "index": 5,
+          "name": "certificate",
+          "type": "Maybe\u003COperatorCertificateInfo\u003E"
+        },
+        {
+          "index": 6,
+          "name": "lastAuthAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 7,
+          "name": "createdAt",
+          "type": "datetime"
+        }
+      ]
+    },
+    "OperatorCertificateInfo": {
+      "kind": "Msg",
+      "nextIndex": 6,
+      "fields": [
+        {
+          "index": 0,
+          "name": "serialNumber",
+          "type": "string"
+        },
+        {
+          "index": 1,
+          "name": "thumbprint",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "subject",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "notBefore",
+          "type": "datetime"
+        },
+        {
+          "index": 4,
+          "name": "notAfter",
+          "type": "datetime"
+        },
+        {
+          "index": 5,
+          "name": "isExpired",
+          "type": "bool"
+        }
+      ]
+    },
+    "OperatorDetails": {
+      "kind": "Msg",
+      "nextIndex": 2,
+      "fields": [
+        {
+          "index": 0,
+          "name": "info",
+          "type": "OperatorInfo"
+        },
+        {
+          "index": 1,
+          "name": "linkedUsername",
+          "type": "Maybe\u003Cstring\u003E"
+        }
+      ]
+    },
+    "CreateOperatorInput": {
+      "kind": "Msg",
+      "nextIndex": 3,
+      "fields": [
+        {
+          "index": 0,
+          "name": "displayName",
+          "type": "string"
+        },
+        {
+          "index": 1,
+          "name": "email",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "userId",
+          "type": "Maybe\u003Cguid\u003E"
+        }
+      ]
+    },
+    "CreateOperatorResult": {
+      "kind": "Msg",
+      "nextIndex": 3,
+      "fields": [
+        {
+          "index": 0,
+          "name": "success",
+          "type": "bool"
+        },
+        {
+          "index": 1,
+          "name": "operatorId",
+          "type": "Maybe\u003Cguid\u003E"
+        },
+        {
+          "index": 2,
+          "name": "error",
+          "type": "Maybe\u003Cstring\u003E"
+        }
+      ]
+    },
+    "OperatorActionResult": {
+      "kind": "Msg",
+      "nextIndex": 2,
+      "fields": [
+        {
+          "index": 0,
+          "name": "success",
+          "type": "bool"
+        },
+        {
+          "index": 1,
+          "name": "error",
+          "type": "Maybe\u003Cstring\u003E"
+        }
+      ]
+    },
+    "EnrollCertificateResult": {
+      "kind": "Msg",
+      "nextIndex": 6,
+      "fields": [
+        {
+          "index": 0,
+          "name": "success",
+          "type": "bool"
+        },
+        {
+          "index": 1,
+          "name": "certificatePem",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 2,
+          "name": "caChainPem",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 3,
+          "name": "serialNumber",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 4,
+          "name": "notAfter",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 5,
+          "name": "error",
+          "type": "Maybe\u003Cstring\u003E"
+        }
+      ]
+    },
     "SearchMatchKind": {
       "kind": "Enum",
       "members": {
@@ -1438,6 +1641,82 @@
         "GetDiagnostics": {
           "args": [],
           "returns": "DiagnosticsResult",
+          "modifiers": []
+        },
+        "GetOperators": {
+          "args": [],
+          "returns": "OperatorList",
+          "modifiers": []
+        },
+        "GetOperatorDetails": {
+          "args": [
+            {
+              "index": 0,
+              "name": "operatorId",
+              "type": "guid"
+            }
+          ],
+          "returns": "OperatorDetails",
+          "modifiers": []
+        },
+        "CreateOperator": {
+          "args": [
+            {
+              "index": 0,
+              "name": "input",
+              "type": "CreateOperatorInput"
+            }
+          ],
+          "returns": "CreateOperatorResult",
+          "modifiers": []
+        },
+        "DeactivateOperator": {
+          "args": [
+            {
+              "index": 0,
+              "name": "operatorId",
+              "type": "guid"
+            }
+          ],
+          "returns": "OperatorActionResult",
+          "modifiers": []
+        },
+        "ActivateOperator": {
+          "args": [
+            {
+              "index": 0,
+              "name": "operatorId",
+              "type": "guid"
+            }
+          ],
+          "returns": "OperatorActionResult",
+          "modifiers": []
+        },
+        "RevokeOperatorCertificate": {
+          "args": [
+            {
+              "index": 0,
+              "name": "operatorId",
+              "type": "guid"
+            }
+          ],
+          "returns": "OperatorActionResult",
+          "modifiers": []
+        },
+        "EnrollOperatorCertificate": {
+          "args": [
+            {
+              "index": 0,
+              "name": "operatorId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "csrPem",
+              "type": "string"
+            }
+          ],
+          "returns": "EnrollCertificateResult",
           "modifiers": []
         }
       }
