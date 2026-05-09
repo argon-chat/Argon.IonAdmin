@@ -17,7 +17,8 @@
             "outputs": "./../Argon.CodeGenAdmin/"
         },
         "browser": {
-            "outputFile": "./../Widget/src/lib/glue/argonControl.ts"
+            "outputFile": "./../src/lib/glue/argonControl.ts",
+            "singleFileOutput": true
         }
     }
 }   
