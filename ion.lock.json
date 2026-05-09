@@ -25,7 +25,7 @@
     },
     "UserCardDetails": {
       "kind": "Msg",
-      "nextIndex": 14,
+      "nextIndex": 18,
       "fields": [
         {
           "index": 0,
@@ -96,6 +96,26 @@
           "index": 13,
           "name": "autoDeleteSettings",
           "type": "Maybe\u003CAutoDeleteSettingsInfo\u003E"
+        },
+        {
+          "index": 14,
+          "name": "bots",
+          "type": "Array\u003CAdminUserBotInfo\u003E"
+        },
+        {
+          "index": 15,
+          "name": "premiumInfo",
+          "type": "Maybe\u003CAdminPremiumInfo\u003E"
+        },
+        {
+          "index": 16,
+          "name": "isBot",
+          "type": "bool"
+        },
+        {
+          "index": 17,
+          "name": "flags",
+          "type": "UserFlag"
         }
       ]
     },
@@ -1504,6 +1524,1088 @@
         }
       ]
     },
+    "AdminBotSearchResult": {
+      "kind": "Msg",
+      "nextIndex": 2,
+      "fields": [
+        {
+          "index": 0,
+          "name": "found",
+          "type": "bool"
+        },
+        {
+          "index": 1,
+          "name": "bot",
+          "type": "Maybe\u003CAdminBotSummary\u003E"
+        }
+      ]
+    },
+    "AdminBotSummary": {
+      "kind": "Msg",
+      "nextIndex": 9,
+      "fields": [
+        {
+          "index": 0,
+          "name": "appId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "username",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "description",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 4,
+          "name": "avatarFileId",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 5,
+          "name": "isVerified",
+          "type": "bool"
+        },
+        {
+          "index": 6,
+          "name": "isPublic",
+          "type": "bool"
+        },
+        {
+          "index": 7,
+          "name": "teamId",
+          "type": "guid"
+        },
+        {
+          "index": 8,
+          "name": "teamName",
+          "type": "string"
+        }
+      ]
+    },
+    "AdminBotCard": {
+      "kind": "Msg",
+      "nextIndex": 18,
+      "fields": [
+        {
+          "index": 0,
+          "name": "appId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "username",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "description",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 4,
+          "name": "avatarFileId",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 5,
+          "name": "isVerified",
+          "type": "bool"
+        },
+        {
+          "index": 6,
+          "name": "isPublic",
+          "type": "bool"
+        },
+        {
+          "index": 7,
+          "name": "isInternalApp",
+          "type": "bool"
+        },
+        {
+          "index": 8,
+          "name": "lifecycleState",
+          "type": "AdminBotLifecycleState"
+        },
+        {
+          "index": 9,
+          "name": "maxSpaces",
+          "type": "i4"
+        },
+        {
+          "index": 10,
+          "name": "currentSpaceCount",
+          "type": "i4"
+        },
+        {
+          "index": 11,
+          "name": "requiredEntitlements",
+          "type": "ArgonEntitlement"
+        },
+        {
+          "index": 12,
+          "name": "requiredScopes",
+          "type": "Array\u003Cstring\u003E"
+        },
+        {
+          "index": 13,
+          "name": "createdAt",
+          "type": "datetime"
+        },
+        {
+          "index": 14,
+          "name": "team",
+          "type": "AdminTeamSummary"
+        },
+        {
+          "index": 15,
+          "name": "creator",
+          "type": "AdminUserSummary"
+        },
+        {
+          "index": 16,
+          "name": "installedSpaces",
+          "type": "Array\u003CAdminBotSpaceInfo\u003E"
+        },
+        {
+          "index": 17,
+          "name": "commands",
+          "type": "Array\u003CAdminBotCommandInfo\u003E"
+        }
+      ]
+    },
+    "AdminBotSpaceInfo": {
+      "kind": "Msg",
+      "nextIndex": 6,
+      "fields": [
+        {
+          "index": 0,
+          "name": "spaceId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "avatarFileId",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 3,
+          "name": "memberCount",
+          "type": "i4"
+        },
+        {
+          "index": 4,
+          "name": "grantedEntitlements",
+          "type": "ArgonEntitlement"
+        },
+        {
+          "index": 5,
+          "name": "pendingApproval",
+          "type": "bool"
+        }
+      ]
+    },
+    "AdminBotCommandInfo": {
+      "kind": "Msg",
+      "nextIndex": 5,
+      "fields": [
+        {
+          "index": 0,
+          "name": "commandId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "description",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "optionCount",
+          "type": "i4"
+        },
+        {
+          "index": 4,
+          "name": "isGlobal",
+          "type": "bool"
+        }
+      ]
+    },
+    "AdminUserSummary": {
+      "kind": "Msg",
+      "nextIndex": 4,
+      "fields": [
+        {
+          "index": 0,
+          "name": "userId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "username",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "displayName",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "avatarFileId",
+          "type": "Maybe\u003Cstring\u003E"
+        }
+      ]
+    },
+    "AdminTeamSearchResult": {
+      "kind": "Msg",
+      "nextIndex": 2,
+      "fields": [
+        {
+          "index": 0,
+          "name": "found",
+          "type": "bool"
+        },
+        {
+          "index": 1,
+          "name": "team",
+          "type": "Maybe\u003CAdminTeamSummary\u003E"
+        }
+      ]
+    },
+    "AdminTeamSummary": {
+      "kind": "Msg",
+      "nextIndex": 7,
+      "fields": [
+        {
+          "index": 0,
+          "name": "teamId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "avatarFileId",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 3,
+          "name": "ownerUserId",
+          "type": "guid"
+        },
+        {
+          "index": 4,
+          "name": "memberCount",
+          "type": "i4"
+        },
+        {
+          "index": 5,
+          "name": "appCount",
+          "type": "i4"
+        },
+        {
+          "index": 6,
+          "name": "createdAt",
+          "type": "datetime"
+        }
+      ]
+    },
+    "AdminTeamCard": {
+      "kind": "Msg",
+      "nextIndex": 7,
+      "fields": [
+        {
+          "index": 0,
+          "name": "teamId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "avatarFileId",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 3,
+          "name": "owner",
+          "type": "AdminUserSummary"
+        },
+        {
+          "index": 4,
+          "name": "createdAt",
+          "type": "datetime"
+        },
+        {
+          "index": 5,
+          "name": "members",
+          "type": "Array\u003CAdminTeamMemberInfo\u003E"
+        },
+        {
+          "index": 6,
+          "name": "apps",
+          "type": "Array\u003CAdminTeamAppInfo\u003E"
+        }
+      ]
+    },
+    "AdminTeamMemberInfo": {
+      "kind": "Msg",
+      "nextIndex": 7,
+      "fields": [
+        {
+          "index": 0,
+          "name": "userId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "username",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "displayName",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "avatarFileId",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 4,
+          "name": "isOwner",
+          "type": "bool"
+        },
+        {
+          "index": 5,
+          "name": "joinedAt",
+          "type": "datetime"
+        },
+        {
+          "index": 6,
+          "name": "claims",
+          "type": "Array\u003Cstring\u003E"
+        }
+      ]
+    },
+    "AdminTeamAppInfo": {
+      "kind": "Msg",
+      "nextIndex": 6,
+      "fields": [
+        {
+          "index": 0,
+          "name": "appId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "appType",
+          "type": "AdminDevAppType"
+        },
+        {
+          "index": 3,
+          "name": "isInternalApp",
+          "type": "bool"
+        },
+        {
+          "index": 4,
+          "name": "isVerified",
+          "type": "bool"
+        },
+        {
+          "index": 5,
+          "name": "createdAt",
+          "type": "datetime"
+        }
+      ]
+    },
+    "AdminSpaceSearchResult": {
+      "kind": "Msg",
+      "nextIndex": 3,
+      "fields": [
+        {
+          "index": 0,
+          "name": "found",
+          "type": "bool"
+        },
+        {
+          "index": 1,
+          "name": "space",
+          "type": "Maybe\u003CAdminSpaceSummary\u003E"
+        },
+        {
+          "index": 2,
+          "name": "matchedBy",
+          "type": "SpaceSearchMatchKind"
+        }
+      ]
+    },
+    "AdminSpaceSummary": {
+      "kind": "Msg",
+      "nextIndex": 6,
+      "fields": [
+        {
+          "index": 0,
+          "name": "spaceId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "avatarFileId",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 3,
+          "name": "memberCount",
+          "type": "i4"
+        },
+        {
+          "index": 4,
+          "name": "channelCount",
+          "type": "i4"
+        },
+        {
+          "index": 5,
+          "name": "createdAt",
+          "type": "datetime"
+        }
+      ]
+    },
+    "AdminSpaceCard": {
+      "kind": "Msg",
+      "nextIndex": 18,
+      "fields": [
+        {
+          "index": 0,
+          "name": "spaceId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "description",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 3,
+          "name": "avatarFileId",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 4,
+          "name": "topBannerFileId",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 5,
+          "name": "isCommunity",
+          "type": "bool"
+        },
+        {
+          "index": 6,
+          "name": "boostCount",
+          "type": "i4"
+        },
+        {
+          "index": 7,
+          "name": "boostLevel",
+          "type": "i4"
+        },
+        {
+          "index": 8,
+          "name": "creator",
+          "type": "AdminUserSummary"
+        },
+        {
+          "index": 9,
+          "name": "createdAt",
+          "type": "datetime"
+        },
+        {
+          "index": 10,
+          "name": "memberCount",
+          "type": "i4"
+        },
+        {
+          "index": 11,
+          "name": "channelCount",
+          "type": "i4"
+        },
+        {
+          "index": 12,
+          "name": "botCount",
+          "type": "i4"
+        },
+        {
+          "index": 13,
+          "name": "channels",
+          "type": "Array\u003CAdminChannelInfo\u003E"
+        },
+        {
+          "index": 14,
+          "name": "channelGroups",
+          "type": "Array\u003CAdminChannelGroupInfo\u003E"
+        },
+        {
+          "index": 15,
+          "name": "archetypes",
+          "type": "Array\u003CAdminArchetypeInfo\u003E"
+        },
+        {
+          "index": 16,
+          "name": "installedBots",
+          "type": "Array\u003CAdminSpaceBotInfo\u003E"
+        },
+        {
+          "index": 17,
+          "name": "recentInvites",
+          "type": "Array\u003CAdminInviteInfo\u003E"
+        }
+      ]
+    },
+    "AdminChannelInfo": {
+      "kind": "Msg",
+      "nextIndex": 8,
+      "fields": [
+        {
+          "index": 0,
+          "name": "channelId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "type",
+          "type": "ChannelType"
+        },
+        {
+          "index": 3,
+          "name": "description",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 4,
+          "name": "groupId",
+          "type": "Maybe\u003Cguid\u003E"
+        },
+        {
+          "index": 5,
+          "name": "slowModeSeconds",
+          "type": "Maybe\u003Ci4\u003E"
+        },
+        {
+          "index": 6,
+          "name": "doNotRestrictBoosters",
+          "type": "bool"
+        },
+        {
+          "index": 7,
+          "name": "lastMessageId",
+          "type": "i8"
+        }
+      ]
+    },
+    "AdminChannelGroupInfo": {
+      "kind": "Msg",
+      "nextIndex": 4,
+      "fields": [
+        {
+          "index": 0,
+          "name": "groupId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "description",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 3,
+          "name": "channelCount",
+          "type": "i4"
+        }
+      ]
+    },
+    "AdminArchetypeInfo": {
+      "kind": "Msg",
+      "nextIndex": 7,
+      "fields": [
+        {
+          "index": 0,
+          "name": "archetypeId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "entitlement",
+          "type": "ArgonEntitlement"
+        },
+        {
+          "index": 3,
+          "name": "isDefault",
+          "type": "bool"
+        },
+        {
+          "index": 4,
+          "name": "isLocked",
+          "type": "bool"
+        },
+        {
+          "index": 5,
+          "name": "isHidden",
+          "type": "bool"
+        },
+        {
+          "index": 6,
+          "name": "memberCount",
+          "type": "i4"
+        }
+      ]
+    },
+    "AdminSpaceBotInfo": {
+      "kind": "Msg",
+      "nextIndex": 7,
+      "fields": [
+        {
+          "index": 0,
+          "name": "appId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "username",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "avatarFileId",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 4,
+          "name": "isVerified",
+          "type": "bool"
+        },
+        {
+          "index": 5,
+          "name": "grantedEntitlements",
+          "type": "ArgonEntitlement"
+        },
+        {
+          "index": 6,
+          "name": "pendingApproval",
+          "type": "bool"
+        }
+      ]
+    },
+    "AdminInviteInfo": {
+      "kind": "Msg",
+      "nextIndex": 5,
+      "fields": [
+        {
+          "index": 0,
+          "name": "code",
+          "type": "string"
+        },
+        {
+          "index": 1,
+          "name": "issuerId",
+          "type": "guid"
+        },
+        {
+          "index": 2,
+          "name": "issuerUsername",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "expireTime",
+          "type": "datetime"
+        },
+        {
+          "index": 4,
+          "name": "used",
+          "type": "i4"
+        }
+      ]
+    },
+    "AdminSpaceMemberPage": {
+      "kind": "Msg",
+      "nextIndex": 4,
+      "fields": [
+        {
+          "index": 0,
+          "name": "members",
+          "type": "Array\u003CAdminSpaceMemberInfo\u003E"
+        },
+        {
+          "index": 1,
+          "name": "totalCount",
+          "type": "i4"
+        },
+        {
+          "index": 2,
+          "name": "offset",
+          "type": "i4"
+        },
+        {
+          "index": 3,
+          "name": "limit",
+          "type": "i4"
+        }
+      ]
+    },
+    "AdminSpaceMemberInfo": {
+      "kind": "Msg",
+      "nextIndex": 6,
+      "fields": [
+        {
+          "index": 0,
+          "name": "userId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "username",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "displayName",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "avatarFileId",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 4,
+          "name": "joinedAt",
+          "type": "datetime"
+        },
+        {
+          "index": 5,
+          "name": "archetypeNames",
+          "type": "Array\u003Cstring\u003E"
+        }
+      ]
+    },
+    "AdminUserBotInfo": {
+      "kind": "Msg",
+      "nextIndex": 7,
+      "fields": [
+        {
+          "index": 0,
+          "name": "appId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "username",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "isVerified",
+          "type": "bool"
+        },
+        {
+          "index": 4,
+          "name": "isPublic",
+          "type": "bool"
+        },
+        {
+          "index": 5,
+          "name": "teamId",
+          "type": "guid"
+        },
+        {
+          "index": 6,
+          "name": "teamName",
+          "type": "string"
+        }
+      ]
+    },
+    "AdminPremiumInfo": {
+      "kind": "Msg",
+      "nextIndex": 11,
+      "fields": [
+        {
+          "index": 0,
+          "name": "subscriptionId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "tier",
+          "type": "UltimaPlan"
+        },
+        {
+          "index": 2,
+          "name": "status",
+          "type": "UltimaSubscriptionStatus"
+        },
+        {
+          "index": 3,
+          "name": "startsAt",
+          "type": "datetime"
+        },
+        {
+          "index": 4,
+          "name": "expiresAt",
+          "type": "datetime"
+        },
+        {
+          "index": 5,
+          "name": "autoRenew",
+          "type": "bool"
+        },
+        {
+          "index": 6,
+          "name": "totalBoostSlots",
+          "type": "i4"
+        },
+        {
+          "index": 7,
+          "name": "usedBoostSlots",
+          "type": "i4"
+        },
+        {
+          "index": 8,
+          "name": "cancelledAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 9,
+          "name": "xsollaSubscriptionId",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 10,
+          "name": "activatedFromItemId",
+          "type": "Maybe\u003Cguid\u003E"
+        }
+      ]
+    },
+    "AdminTransactionPage": {
+      "kind": "Msg",
+      "nextIndex": 4,
+      "fields": [
+        {
+          "index": 0,
+          "name": "transactions",
+          "type": "Array\u003CAdminTransactionInfo\u003E"
+        },
+        {
+          "index": 1,
+          "name": "totalCount",
+          "type": "i4"
+        },
+        {
+          "index": 2,
+          "name": "page",
+          "type": "i4"
+        },
+        {
+          "index": 3,
+          "name": "pageSize",
+          "type": "i4"
+        }
+      ]
+    },
+    "AdminTransactionInfo": {
+      "kind": "Msg",
+      "nextIndex": 15,
+      "fields": [
+        {
+          "index": 0,
+          "name": "transactionId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "userId",
+          "type": "guid"
+        },
+        {
+          "index": 2,
+          "name": "username",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "xsollaTxId",
+          "type": "string"
+        },
+        {
+          "index": 4,
+          "name": "transactionType",
+          "type": "string"
+        },
+        {
+          "index": 5,
+          "name": "planExternalId",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 6,
+          "name": "boostPackType",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 7,
+          "name": "boostCount",
+          "type": "Maybe\u003Ci4\u003E"
+        },
+        {
+          "index": 8,
+          "name": "amount",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 9,
+          "name": "currency",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 10,
+          "name": "recipientId",
+          "type": "Maybe\u003Cguid\u003E"
+        },
+        {
+          "index": 11,
+          "name": "cardSuffix",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 12,
+          "name": "cardBrand",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 13,
+          "name": "status",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 14,
+          "name": "createdAt",
+          "type": "datetime"
+        }
+      ]
+    },
+    "AdminTransactionDetails": {
+      "kind": "Msg",
+      "nextIndex": 3,
+      "fields": [
+        {
+          "index": 0,
+          "name": "transaction",
+          "type": "AdminTransactionInfo"
+        },
+        {
+          "index": 1,
+          "name": "relatedItems",
+          "type": "Array\u003CAdminTransactionItemInfo\u003E"
+        },
+        {
+          "index": 2,
+          "name": "premiumInfo",
+          "type": "Maybe\u003CAdminPremiumInfo\u003E"
+        }
+      ]
+    },
+    "AdminTransactionItemInfo": {
+      "kind": "Msg",
+      "nextIndex": 3,
+      "fields": [
+        {
+          "index": 0,
+          "name": "itemId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "templateId",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "createdAt",
+          "type": "datetime"
+        }
+      ]
+    },
     "SearchMatchKind": {
       "kind": "Enum",
       "members": {
@@ -1512,25 +2614,6 @@
         "Username": "2",
         "Email": "3",
         "Phone": "4"
-      },
-      "baseType": "u4"
-    },
-    "ArgonAuthMode": {
-      "kind": "Enum",
-      "members": {
-        "Password": "0",
-        "Passwordless": "1",
-        "Passkey": "2"
-      },
-      "baseType": "u4"
-    },
-    "OtpMethod": {
-      "kind": "Enum",
-      "members": {
-        "None": "0",
-        "Totp": "1",
-        "Sms": "2",
-        "Email": "3"
       },
       "baseType": "u4"
     },
@@ -1556,6 +2639,33 @@
         "Premium": "2",
         "QualifierBox": "3",
         "Box": "4"
+      },
+      "baseType": "u4"
+    },
+    "AdminBotLifecycleState": {
+      "kind": "Enum",
+      "members": {
+        "Development": "0",
+        "Published": "1",
+        "Suspended": "2"
+      },
+      "baseType": "u4"
+    },
+    "AdminDevAppType": {
+      "kind": "Enum",
+      "members": {
+        "Application": "0",
+        "Bot": "1",
+        "WebApp": "2"
+      },
+      "baseType": "u4"
+    },
+    "SpaceSearchMatchKind": {
+      "kind": "Enum",
+      "members": {
+        "None": "0",
+        "SpaceId": "1",
+        "Name": "2"
       },
       "baseType": "u4"
     },
@@ -1861,6 +2971,291 @@
             }
           ],
           "returns": "AuditLogPage",
+          "modifiers": []
+        },
+        "SearchBot": {
+          "args": [
+            {
+              "index": 0,
+              "name": "query",
+              "type": "string"
+            }
+          ],
+          "returns": "AdminBotSearchResult",
+          "modifiers": []
+        },
+        "GetBotCard": {
+          "args": [
+            {
+              "index": 0,
+              "name": "appId",
+              "type": "guid"
+            }
+          ],
+          "returns": "AdminBotCard",
+          "modifiers": []
+        },
+        "SetBotVerified": {
+          "args": [
+            {
+              "index": 0,
+              "name": "appId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "isVerified",
+              "type": "bool"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "SetBotMaxSpaces": {
+          "args": [
+            {
+              "index": 0,
+              "name": "appId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "maxSpaces",
+              "type": "i4"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "SetBotInternalApp": {
+          "args": [
+            {
+              "index": 0,
+              "name": "appId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "isInternalApp",
+              "type": "bool"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "SetBotLifecycleState": {
+          "args": [
+            {
+              "index": 0,
+              "name": "appId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "state",
+              "type": "AdminBotLifecycleState"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "SearchTeam": {
+          "args": [
+            {
+              "index": 0,
+              "name": "query",
+              "type": "string"
+            }
+          ],
+          "returns": "AdminTeamSearchResult",
+          "modifiers": []
+        },
+        "GetTeamCard": {
+          "args": [
+            {
+              "index": 0,
+              "name": "teamId",
+              "type": "guid"
+            }
+          ],
+          "returns": "AdminTeamCard",
+          "modifiers": []
+        },
+        "SearchSpace": {
+          "args": [
+            {
+              "index": 0,
+              "name": "query",
+              "type": "string"
+            }
+          ],
+          "returns": "AdminSpaceSearchResult",
+          "modifiers": []
+        },
+        "GetSpaceCard": {
+          "args": [
+            {
+              "index": 0,
+              "name": "spaceId",
+              "type": "guid"
+            }
+          ],
+          "returns": "AdminSpaceCard",
+          "modifiers": []
+        },
+        "GetSpaceMembers": {
+          "args": [
+            {
+              "index": 0,
+              "name": "spaceId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "offset",
+              "type": "i4"
+            },
+            {
+              "index": 2,
+              "name": "limit",
+              "type": "i4"
+            }
+          ],
+          "returns": "AdminSpaceMemberPage",
+          "modifiers": []
+        },
+        "CancelUserSubscription": {
+          "args": [
+            {
+              "index": 0,
+              "name": "userId",
+              "type": "guid"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "ExpireUserSubscription": {
+          "args": [
+            {
+              "index": 0,
+              "name": "userId",
+              "type": "guid"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "GrantPremium": {
+          "args": [
+            {
+              "index": 0,
+              "name": "userId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "tier",
+              "type": "UltimaPlan"
+            },
+            {
+              "index": 2,
+              "name": "durationDays",
+              "type": "i4"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "GetUserTransactions": {
+          "args": [
+            {
+              "index": 0,
+              "name": "userId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "page",
+              "type": "i4"
+            },
+            {
+              "index": 2,
+              "name": "pageSize",
+              "type": "i4"
+            }
+          ],
+          "returns": "AdminTransactionPage",
+          "modifiers": []
+        },
+        "GetTransactionByXsollaId": {
+          "args": [
+            {
+              "index": 0,
+              "name": "xsollaTxId",
+              "type": "string"
+            }
+          ],
+          "returns": "Maybe\u003CAdminTransactionDetails\u003E",
+          "modifiers": []
+        },
+        "ChangeUserAuthMode": {
+          "args": [
+            {
+              "index": 0,
+              "name": "userId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "authMode",
+              "type": "ArgonAuthMode"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "ChangeUserOtpMethod": {
+          "args": [
+            {
+              "index": 0,
+              "name": "userId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "otpMethod",
+              "type": "OtpMethod"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "BeginUploadUserAvatar": {
+          "args": [
+            {
+              "index": 0,
+              "name": "userId",
+              "type": "guid"
+            }
+          ],
+          "returns": "UploadFileResult",
+          "modifiers": []
+        },
+        "CompleteUploadUserAvatar": {
+          "args": [
+            {
+              "index": 0,
+              "name": "userId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "blobId",
+              "type": "guid"
+            }
+          ],
+          "returns": "UserActionResult",
           "modifiers": []
         }
       }

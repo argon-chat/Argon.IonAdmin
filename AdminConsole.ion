@@ -1,4 +1,4 @@
-#import { LockdownReason, ArgonUserProfile } from "argon";
+#import { LockdownReason, ArgonUserProfile, ArgonEntitlement, UserFlag, ChannelType, UltimaPlan, UltimaSubscriptionStatus, BoostSource, UploadFileResult, ArgonAuthMode, OtpMethod } from "argon";
 
 
 service AdminConsole() {
@@ -37,6 +37,32 @@ service AdminConsole() {
     EnrollOperatorCertificate(operatorId: guid, csrPem: string): EnrollCertificateResult;
     
     GetAuditLog(query: AuditLogQuery): AuditLogPage;
+
+    SearchBot(query: string): AdminBotSearchResult;
+    GetBotCard(appId: guid): AdminBotCard;
+    SetBotVerified(appId: guid, isVerified: bool): UserActionResult;
+    SetBotMaxSpaces(appId: guid, maxSpaces: i4): UserActionResult;
+    SetBotInternalApp(appId: guid, isInternalApp: bool): UserActionResult;
+    SetBotLifecycleState(appId: guid, state: AdminBotLifecycleState): UserActionResult;
+
+    SearchTeam(query: string): AdminTeamSearchResult;
+    GetTeamCard(teamId: guid): AdminTeamCard;
+
+    SearchSpace(query: string): AdminSpaceSearchResult;
+    GetSpaceCard(spaceId: guid): AdminSpaceCard;
+    GetSpaceMembers(spaceId: guid, offset: i4, limit: i4): AdminSpaceMemberPage;
+
+    CancelUserSubscription(userId: guid): UserActionResult;
+    ExpireUserSubscription(userId: guid): UserActionResult;
+    GrantPremium(userId: guid, tier: UltimaPlan, durationDays: i4): UserActionResult;
+
+    GetUserTransactions(userId: guid, page: i4, pageSize: i4): AdminTransactionPage;
+    GetTransactionByXsollaId(xsollaTxId: string): AdminTransactionDetails?;
+
+    ChangeUserAuthMode(userId: guid, authMode: ArgonAuthMode): UserActionResult;
+    ChangeUserOtpMethod(userId: guid, otpMethod: OtpMethod): UserActionResult;
+    BeginUploadUserAvatar(userId: guid): UploadFileResult;
+    CompleteUploadUserAvatar(userId: guid, blobId: guid): UserActionResult;
 }
 
 msg SearchUserResult {
@@ -68,6 +94,10 @@ msg UserCardDetails {
     teams: UserTeamInfo[];
     friendCount: i4;
     autoDeleteSettings: AutoDeleteSettingsInfo?;
+    bots: AdminUserBotInfo[];
+    premiumInfo: AdminPremiumInfo?;
+    isBot: bool;
+    flags: UserFlag;
 }
 
 msg UserAccountInfo {
@@ -89,19 +119,6 @@ msg UserAccountInfo {
     blockedUsersCount: i4;
     directMessagesCount: i4;
     conversationsCount: i4;
-}
-
-enum ArgonAuthMode {
-    Password,
-    Passwordless,
-    Passkey
-}
-
-enum OtpMethod {
-    None,
-    Totp,
-    Sms,
-    Email
 }
 
 msg InventoryItemInfo {
@@ -456,4 +473,296 @@ msg AuditEntry {
     targetId: string?;
     details: string?;
     timestamp: datetime;
+}
+
+
+msg AdminBotSearchResult {
+    found: bool;
+    bot: AdminBotSummary?;
+}
+
+msg AdminBotSummary {
+    appId: guid;
+    name: string;
+    username: string;
+    description: string?;
+    avatarFileId: string?;
+    isVerified: bool;
+    isPublic: bool;
+    teamId: guid;
+    teamName: string;
+}
+
+msg AdminBotCard {
+    appId: guid;
+    name: string;
+    username: string;
+    description: string?;
+    avatarFileId: string?;
+    isVerified: bool;
+    isPublic: bool;
+    isInternalApp: bool;
+    lifecycleState: AdminBotLifecycleState;
+    maxSpaces: i4;
+    currentSpaceCount: i4;
+    requiredEntitlements: ArgonEntitlement;
+    requiredScopes: string[];
+    createdAt: datetime;
+    team: AdminTeamSummary;
+    creator: AdminUserSummary;
+    installedSpaces: AdminBotSpaceInfo[];
+    commands: AdminBotCommandInfo[];
+}
+
+enum AdminBotLifecycleState {
+    Development,
+    Published,
+    Suspended
+}
+
+msg AdminBotSpaceInfo {
+    spaceId: guid;
+    name: string;
+    avatarFileId: string?;
+    memberCount: i4;
+    grantedEntitlements: ArgonEntitlement;
+    pendingApproval: bool;
+}
+
+msg AdminBotCommandInfo {
+    commandId: guid;
+    name: string;
+    description: string;
+    optionCount: i4;
+    isGlobal: bool;
+}
+
+msg AdminUserSummary {
+    userId: guid;
+    username: string;
+    displayName: string;
+    avatarFileId: string?;
+}
+
+
+
+msg AdminTeamSearchResult {
+    found: bool;
+    team: AdminTeamSummary?;
+}
+
+msg AdminTeamSummary {
+    teamId: guid;
+    name: string;
+    avatarFileId: string?;
+    ownerUserId: guid;
+    memberCount: i4;
+    appCount: i4;
+    createdAt: datetime;
+}
+
+msg AdminTeamCard {
+    teamId: guid;
+    name: string;
+    avatarFileId: string?;
+    owner: AdminUserSummary;
+    createdAt: datetime;
+    members: AdminTeamMemberInfo[];
+    apps: AdminTeamAppInfo[];
+}
+
+msg AdminTeamMemberInfo {
+    userId: guid;
+    username: string;
+    displayName: string;
+    avatarFileId: string?;
+    isOwner: bool;
+    joinedAt: datetime;
+    claims: string[];
+}
+
+msg AdminTeamAppInfo {
+    appId: guid;
+    name: string;
+    appType: AdminDevAppType;
+    isInternalApp: bool;
+    isVerified: bool;
+    createdAt: datetime;
+}
+
+enum AdminDevAppType {
+    Application,
+    Bot,
+    WebApp
+}
+
+
+
+msg AdminSpaceSearchResult {
+    found: bool;
+    space: AdminSpaceSummary?;
+    matchedBy: SpaceSearchMatchKind;
+}
+
+enum SpaceSearchMatchKind {
+    None,
+    SpaceId,
+    Name
+}
+
+msg AdminSpaceSummary {
+    spaceId: guid;
+    name: string;
+    avatarFileId: string?;
+    memberCount: i4;
+    channelCount: i4;
+    createdAt: datetime;
+}
+
+msg AdminSpaceCard {
+    spaceId: guid;
+    name: string;
+    description: string?;
+    avatarFileId: string?;
+    topBannerFileId: string?;
+    isCommunity: bool;
+    boostCount: i4;
+    boostLevel: i4;
+    creator: AdminUserSummary;
+    createdAt: datetime;
+    memberCount: i4;
+    channelCount: i4;
+    botCount: i4;
+    channels: AdminChannelInfo[];
+    channelGroups: AdminChannelGroupInfo[];
+    archetypes: AdminArchetypeInfo[];
+    installedBots: AdminSpaceBotInfo[];
+    recentInvites: AdminInviteInfo[];
+}
+
+msg AdminChannelInfo {
+    channelId: guid;
+    name: string;
+    type: ChannelType;
+    description: string?;
+    groupId: guid?;
+    slowModeSeconds: i4?;
+    doNotRestrictBoosters: bool;
+    lastMessageId: i8;
+}
+
+msg AdminChannelGroupInfo {
+    groupId: guid;
+    name: string;
+    description: string?;
+    channelCount: i4;
+}
+
+msg AdminArchetypeInfo {
+    archetypeId: guid;
+    name: string;
+    entitlement: ArgonEntitlement;
+    isDefault: bool;
+    isLocked: bool;
+    isHidden: bool;
+    memberCount: i4;
+}
+
+msg AdminSpaceBotInfo {
+    appId: guid;
+    name: string;
+    username: string;
+    avatarFileId: string?;
+    isVerified: bool;
+    grantedEntitlements: ArgonEntitlement;
+    pendingApproval: bool;
+}
+
+msg AdminInviteInfo {
+    code: string;
+    issuerId: guid;
+    issuerUsername: string;
+    expireTime: datetime;
+    used: i4;
+}
+
+msg AdminSpaceMemberPage {
+    members: AdminSpaceMemberInfo[];
+    totalCount: i4;
+    offset: i4;
+    limit: i4;
+}
+
+msg AdminSpaceMemberInfo {
+    userId: guid;
+    username: string;
+    displayName: string;
+    avatarFileId: string?;
+    joinedAt: datetime;
+    archetypeNames: string[];
+}
+
+
+
+msg AdminUserBotInfo {
+    appId: guid;
+    name: string;
+    username: string;
+    isVerified: bool;
+    isPublic: bool;
+    teamId: guid;
+    teamName: string;
+}
+
+msg AdminPremiumInfo {
+    subscriptionId: guid;
+    tier: UltimaPlan;
+    status: UltimaSubscriptionStatus;
+    startsAt: datetime;
+    expiresAt: datetime;
+    autoRenew: bool;
+    totalBoostSlots: i4;
+    usedBoostSlots: i4;
+    cancelledAt: datetime?;
+    xsollaSubscriptionId: string?;
+    activatedFromItemId: guid?;
+}
+
+
+
+msg AdminTransactionPage {
+    transactions: AdminTransactionInfo[];
+    totalCount: i4;
+    page: i4;
+    pageSize: i4;
+}
+
+msg AdminTransactionInfo {
+    transactionId: guid;
+    userId: guid;
+    username: string;
+    xsollaTxId: string;
+    transactionType: string;
+    planExternalId: string?;
+    boostPackType: string?;
+    boostCount: i4?;
+    amount: string?;
+    currency: string?;
+    recipientId: guid?;
+    cardSuffix: string?;
+    cardBrand: string?;
+    status: string?;
+    createdAt: datetime;
+}
+
+msg AdminTransactionDetails {
+    transaction: AdminTransactionInfo;
+    relatedItems: AdminTransactionItemInfo[];
+    premiumInfo: AdminPremiumInfo?;
+}
+
+msg AdminTransactionItemInfo {
+    itemId: guid;
+    templateId: string;
+    createdAt: datetime;
 }
