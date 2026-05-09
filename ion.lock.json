@@ -1181,7 +1181,7 @@
     },
     "OperatorInfo": {
       "kind": "Msg",
-      "nextIndex": 8,
+      "nextIndex": 9,
       "fields": [
         {
           "index": 0,
@@ -1210,16 +1210,21 @@
         },
         {
           "index": 5,
+          "name": "isSystemOperator",
+          "type": "bool"
+        },
+        {
+          "index": 6,
           "name": "certificate",
           "type": "Maybe\u003COperatorCertificateInfo\u003E"
         },
         {
-          "index": 6,
+          "index": 7,
           "name": "lastAuthAt",
           "type": "Maybe\u003Cdatetime\u003E"
         },
         {
-          "index": 7,
+          "index": 8,
           "name": "createdAt",
           "type": "datetime"
         }
@@ -1279,7 +1284,7 @@
     },
     "CreateOperatorInput": {
       "kind": "Msg",
-      "nextIndex": 3,
+      "nextIndex": 4,
       "fields": [
         {
           "index": 0,
@@ -1295,6 +1300,11 @@
           "index": 2,
           "name": "userId",
           "type": "Maybe\u003Cguid\u003E"
+        },
+        {
+          "index": 3,
+          "name": "isSystemOperator",
+          "type": "bool"
         }
       ]
     },

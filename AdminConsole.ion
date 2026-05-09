@@ -379,6 +379,7 @@ msg OperatorInfo {
     email: string;
     userId: guid?;
     isActive: bool;
+    isSystemOperator: bool;
     certificate: OperatorCertificateInfo?;
     lastAuthAt: datetime?;
     createdAt: datetime;
@@ -402,6 +403,7 @@ msg CreateOperatorInput {
     displayName: string;
     email: string;
     userId: guid?;
+    isSystemOperator: bool;
 }
 
 msg CreateOperatorResult {
