@@ -1268,7 +1268,7 @@
     },
     "OperatorDetails": {
       "kind": "Msg",
-      "nextIndex": 2,
+      "nextIndex": 4,
       "fields": [
         {
           "index": 0,
@@ -1277,8 +1277,18 @@
         },
         {
           "index": 1,
-          "name": "linkedUsername",
-          "type": "Maybe\u003Cstring\u003E"
+          "name": "linkedUser",
+          "type": "Maybe\u003CUserAccountInfo\u003E"
+        },
+        {
+          "index": 2,
+          "name": "linkedProfile",
+          "type": "Maybe\u003CArgonUserProfile\u003E"
+        },
+        {
+          "index": 3,
+          "name": "recentAuditEntries",
+          "type": "Array\u003CAuditEntry\u003E"
         }
       ]
     },
@@ -1378,6 +1388,119 @@
           "index": 5,
           "name": "error",
           "type": "Maybe\u003Cstring\u003E"
+        }
+      ]
+    },
+    "AuditLogQuery": {
+      "kind": "Msg",
+      "nextIndex": 7,
+      "fields": [
+        {
+          "index": 0,
+          "name": "operatorId",
+          "type": "Maybe\u003Cguid\u003E"
+        },
+        {
+          "index": 1,
+          "name": "action",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 2,
+          "name": "targetId",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 3,
+          "name": "fromDate",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 4,
+          "name": "toDate",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 5,
+          "name": "page",
+          "type": "i4"
+        },
+        {
+          "index": 6,
+          "name": "pageSize",
+          "type": "i4"
+        }
+      ]
+    },
+    "AuditLogPage": {
+      "kind": "Msg",
+      "nextIndex": 4,
+      "fields": [
+        {
+          "index": 0,
+          "name": "entries",
+          "type": "Array\u003CAuditEntry\u003E"
+        },
+        {
+          "index": 1,
+          "name": "totalCount",
+          "type": "i4"
+        },
+        {
+          "index": 2,
+          "name": "page",
+          "type": "i4"
+        },
+        {
+          "index": 3,
+          "name": "pageSize",
+          "type": "i4"
+        }
+      ]
+    },
+    "AuditEntry": {
+      "kind": "Msg",
+      "nextIndex": 8,
+      "fields": [
+        {
+          "index": 0,
+          "name": "auditId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "operatorId",
+          "type": "guid"
+        },
+        {
+          "index": 2,
+          "name": "operatorEmail",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "action",
+          "type": "string"
+        },
+        {
+          "index": 4,
+          "name": "targetType",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 5,
+          "name": "targetId",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 6,
+          "name": "details",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 7,
+          "name": "timestamp",
+          "type": "datetime"
         }
       ]
     },
@@ -1727,6 +1850,17 @@
             }
           ],
           "returns": "EnrollCertificateResult",
+          "modifiers": []
+        },
+        "GetAuditLog": {
+          "args": [
+            {
+              "index": 0,
+              "name": "query",
+              "type": "AuditLogQuery"
+            }
+          ],
+          "returns": "AuditLogPage",
           "modifiers": []
         }
       }

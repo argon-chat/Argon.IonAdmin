@@ -35,6 +35,8 @@ service AdminConsole() {
     ActivateOperator(operatorId: guid): OperatorActionResult;
     RevokeOperatorCertificate(operatorId: guid): OperatorActionResult;
     EnrollOperatorCertificate(operatorId: guid, csrPem: string): EnrollCertificateResult;
+    
+    GetAuditLog(query: AuditLogQuery): AuditLogPage;
 }
 
 msg SearchUserResult {
@@ -396,7 +398,9 @@ msg OperatorCertificateInfo {
 
 msg OperatorDetails {
     info: OperatorInfo;
-    linkedUsername: string?;
+    linkedUser: UserAccountInfo?;
+    linkedProfile: ArgonUserProfile?;
+    recentAuditEntries: AuditEntry[];
 }
 
 msg CreateOperatorInput {
@@ -424,4 +428,32 @@ msg EnrollCertificateResult {
     serialNumber: string?;
     notAfter: datetime?;
     error: string?;
+}
+
+msg AuditLogQuery {
+    operatorId: guid?;
+    action: string?;
+    targetId: string?;
+    fromDate: datetime?;
+    toDate: datetime?;
+    page: i4;
+    pageSize: i4;
+}
+
+msg AuditLogPage {
+    entries: AuditEntry[];
+    totalCount: i4;
+    page: i4;
+    pageSize: i4;
+}
+
+msg AuditEntry {
+    auditId: guid;
+    operatorId: guid;
+    operatorEmail: string;
+    action: string;
+    targetType: string?;
+    targetId: string?;
+    details: string?;
+    timestamp: datetime;
 }
