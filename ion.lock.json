@@ -2606,6 +2606,190 @@
         }
       ]
     },
+    "AdminReportPage": {
+      "kind": "Msg",
+      "nextIndex": 4,
+      "fields": [
+        {
+          "index": 0,
+          "name": "reports",
+          "type": "Array\u003CAdminReportEntry\u003E"
+        },
+        {
+          "index": 1,
+          "name": "totalCount",
+          "type": "i4"
+        },
+        {
+          "index": 2,
+          "name": "offset",
+          "type": "i4"
+        },
+        {
+          "index": 3,
+          "name": "limit",
+          "type": "i4"
+        }
+      ]
+    },
+    "AdminReportEntry": {
+      "kind": "Msg",
+      "nextIndex": 14,
+      "fields": [
+        {
+          "index": 0,
+          "name": "reportId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "reporterId",
+          "type": "guid"
+        },
+        {
+          "index": 2,
+          "name": "reporterUsername",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "target",
+          "type": "ReportTarget"
+        },
+        {
+          "index": 4,
+          "name": "targetDisplayName",
+          "type": "string"
+        },
+        {
+          "index": 5,
+          "name": "category",
+          "type": "ReportCategory"
+        },
+        {
+          "index": 6,
+          "name": "reason",
+          "type": "ReportReason"
+        },
+        {
+          "index": 7,
+          "name": "additionalInfo",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 8,
+          "name": "status",
+          "type": "ReportStatus"
+        },
+        {
+          "index": 9,
+          "name": "referenceReportId",
+          "type": "Maybe\u003Cguid\u003E"
+        },
+        {
+          "index": 10,
+          "name": "assignedOperatorId",
+          "type": "Maybe\u003Cguid\u003E"
+        },
+        {
+          "index": 11,
+          "name": "resolutionNote",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 12,
+          "name": "createdAt",
+          "type": "datetime"
+        },
+        {
+          "index": 13,
+          "name": "resolvedAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        }
+      ]
+    },
+    "ResolveReportInput": {
+      "kind": "Msg",
+      "nextIndex": 4,
+      "fields": [
+        {
+          "index": 0,
+          "name": "reportId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "status",
+          "type": "ReportStatus"
+        },
+        {
+          "index": 2,
+          "name": "resolutionNote",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 3,
+          "name": "applyAction",
+          "type": "ReportActionKind"
+        }
+      ]
+    },
+    "AdminUserTrustCard": {
+      "kind": "Msg",
+      "nextIndex": 10,
+      "fields": [
+        {
+          "index": 0,
+          "name": "userId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "username",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "trustScore",
+          "type": "i4"
+        },
+        {
+          "index": 3,
+          "name": "totalReportsReceived",
+          "type": "i4"
+        },
+        {
+          "index": 4,
+          "name": "confirmedReportsReceived",
+          "type": "i4"
+        },
+        {
+          "index": 5,
+          "name": "totalReportsFiled",
+          "type": "i4"
+        },
+        {
+          "index": 6,
+          "name": "falseReportsFiled",
+          "type": "i4"
+        },
+        {
+          "index": 7,
+          "name": "autoActionsApplied",
+          "type": "i4"
+        },
+        {
+          "index": 8,
+          "name": "accountAge",
+          "type": "duration"
+        },
+        {
+          "index": 9,
+          "name": "lastActivity",
+          "type": "datetime"
+        }
+      ]
+    },
     "SearchMatchKind": {
       "kind": "Enum",
       "members": {
@@ -2666,6 +2850,19 @@
         "None": "0",
         "SpaceId": "1",
         "Name": "2"
+      },
+      "baseType": "u4"
+    },
+    "ReportActionKind": {
+      "kind": "Enum",
+      "members": {
+        "NONE": "0",
+        "WARN_USER": "1",
+        "MUTE_USER": "2",
+        "RESTRICT_USER": "3",
+        "BAN_USER": "4",
+        "DELETE_CONTENT": "5",
+        "QUARANTINE_CONTENT": "6"
       },
       "baseType": "u4"
     },
@@ -3256,6 +3453,92 @@
             }
           ],
           "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "GetReports": {
+          "args": [
+            {
+              "index": 0,
+              "name": "status",
+              "type": "Maybe\u003CReportStatus\u003E"
+            },
+            {
+              "index": 1,
+              "name": "category",
+              "type": "Maybe\u003CReportCategory\u003E"
+            },
+            {
+              "index": 2,
+              "name": "limit",
+              "type": "i4"
+            },
+            {
+              "index": 3,
+              "name": "offset",
+              "type": "i4"
+            }
+          ],
+          "returns": "AdminReportPage",
+          "modifiers": []
+        },
+        "GetReportById": {
+          "args": [
+            {
+              "index": 0,
+              "name": "reportId",
+              "type": "guid"
+            }
+          ],
+          "returns": "AdminReportEntry",
+          "modifiers": []
+        },
+        "ResolveReport": {
+          "args": [
+            {
+              "index": 0,
+              "name": "input",
+              "type": "ResolveReportInput"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "AssignReport": {
+          "args": [
+            {
+              "index": 0,
+              "name": "reportId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "operatorId",
+              "type": "guid"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "GetUserTrustCard": {
+          "args": [
+            {
+              "index": 0,
+              "name": "userId",
+              "type": "guid"
+            }
+          ],
+          "returns": "AdminUserTrustCard",
+          "modifiers": []
+        },
+        "RecalculateUserTrust": {
+          "args": [
+            {
+              "index": 0,
+              "name": "userId",
+              "type": "guid"
+            }
+          ],
+          "returns": "AdminUserTrustCard",
           "modifiers": []
         }
       }

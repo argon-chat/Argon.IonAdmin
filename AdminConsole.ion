@@ -1,4 +1,4 @@
-#import { LockdownReason, ArgonUserProfile, ArgonEntitlement, UserFlag, ChannelType, UltimaPlan, UltimaSubscriptionStatus, BoostSource, UploadFileResult, ArgonAuthMode, OtpMethod } from "argon";
+#import { LockdownReason, ArgonUserProfile, ArgonEntitlement, UserFlag, ChannelType, UltimaPlan, UltimaSubscriptionStatus, BoostSource, UploadFileResult, ArgonAuthMode, OtpMethod, ReportTarget, ReportCategory, ReportReason, ReportStatus } from "argon";
 
 
 service AdminConsole() {
@@ -63,6 +63,13 @@ service AdminConsole() {
     ChangeUserOtpMethod(userId: guid, otpMethod: OtpMethod): UserActionResult;
     BeginUploadUserAvatar(userId: guid): UploadFileResult;
     CompleteUploadUserAvatar(userId: guid, blobId: guid): UserActionResult;
+
+    GetReports(status: ReportStatus?, category: ReportCategory?, limit: i4, offset: i4): AdminReportPage;
+    GetReportById(reportId: guid): AdminReportEntry;
+    ResolveReport(input: ResolveReportInput): UserActionResult;
+    AssignReport(reportId: guid, operatorId: guid): UserActionResult;
+    GetUserTrustCard(userId: guid): AdminUserTrustCard;
+    RecalculateUserTrust(userId: guid): AdminUserTrustCard;
 }
 
 msg SearchUserResult {
@@ -765,4 +772,60 @@ msg AdminTransactionItemInfo {
     itemId: guid;
     templateId: string;
     createdAt: datetime;
+}
+
+
+enum ReportActionKind {
+    NONE,
+    WARN_USER,
+    MUTE_USER,
+    RESTRICT_USER,
+    BAN_USER,
+    DELETE_CONTENT,
+    QUARANTINE_CONTENT
+}
+
+
+msg AdminReportPage {
+    reports: AdminReportEntry[];
+    totalCount: i4;
+    offset: i4;
+    limit: i4;
+}
+
+msg AdminReportEntry {
+    reportId: guid;
+    reporterId: guid;
+    reporterUsername: string;
+    target: ReportTarget;
+    targetDisplayName: string;
+    category: ReportCategory;
+    reason: ReportReason;
+    additionalInfo: string?;
+    status: ReportStatus;
+    referenceReportId: guid?;
+    assignedOperatorId: guid?;
+    resolutionNote: string?;
+    createdAt: datetime;
+    resolvedAt: datetime?;
+}
+
+msg ResolveReportInput {
+    reportId: guid;
+    status: ReportStatus;
+    resolutionNote: string?;
+    applyAction: ReportActionKind;
+}
+
+msg AdminUserTrustCard {
+    userId: guid;
+    username: string;
+    trustScore: i4;
+    totalReportsReceived: i4;
+    confirmedReportsReceived: i4;
+    totalReportsFiled: i4;
+    falseReportsFiled: i4;
+    autoActionsApplied: i4;
+    accountAge: duration;
+    lastActivity: datetime;
 }
