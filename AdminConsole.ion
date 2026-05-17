@@ -36,6 +36,11 @@ service AdminConsole() {
     RevokeOperatorCertificate(operatorId: guid): OperatorActionResult;
     EnrollOperatorCertificate(operatorId: guid, csrPem: string): EnrollCertificateResult;
     
+    GetOperatorAppAccess(operatorId: guid): OperatorAppAccessList;
+    GrantOperatorAppAccess(input: GrantOperatorAppAccessInput): OperatorAppAccessResult;
+    RevokeOperatorAppAccess(operatorId: guid, appId: guid): OperatorActionResult;
+    UpdateOperatorAppAccess(input: UpdateOperatorAppAccessInput): OperatorAppAccessResult;
+
     GetAuditLog(query: AuditLogQuery): AuditLogPage;
 
     SearchBot(query: string): AdminBotSearchResult;
@@ -453,6 +458,44 @@ msg EnrollCertificateResult {
     notAfter: datetime?;
     error: string?;
 }
+
+
+msg OperatorAppAccessList {
+    entries: OperatorAppAccessEntry[];
+}
+
+msg OperatorAppAccessEntry {
+    operatorId: guid;
+    appId: guid;
+    appName: string;
+    appClientId: string;
+    allowedScopes: string[];
+    claims: string[];
+    grantedBy: guid;
+    grantedAt: datetime;
+    isActive: bool;
+}
+
+msg GrantOperatorAppAccessInput {
+    operatorId: guid;
+    appId: guid;
+    allowedScopes: string[];
+    claims: string[];
+}
+
+msg UpdateOperatorAppAccessInput {
+    operatorId: guid;
+    appId: guid;
+    allowedScopes: string[];
+    claims: string[];
+    isActive: bool;
+}
+
+msg OperatorAppAccessResult {
+    success: bool;
+    error: string?;
+}
+
 
 msg AuditLogQuery {
     operatorId: guid?;
