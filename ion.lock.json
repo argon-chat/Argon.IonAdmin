@@ -1546,6 +1546,63 @@
         }
       ]
     },
+    "InternalAppSearchResult": {
+      "kind": "Msg",
+      "nextIndex": 1,
+      "fields": [
+        {
+          "index": 0,
+          "name": "apps",
+          "type": "Array\u003CInternalAppInfo\u003E"
+        }
+      ]
+    },
+    "InternalAppInfo": {
+      "kind": "Msg",
+      "nextIndex": 8,
+      "fields": [
+        {
+          "index": 0,
+          "name": "appId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "clientId",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "description",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 4,
+          "name": "appType",
+          "type": "AdminDevAppType"
+        },
+        {
+          "index": 5,
+          "name": "teamId",
+          "type": "guid"
+        },
+        {
+          "index": 6,
+          "name": "teamName",
+          "type": "string"
+        },
+        {
+          "index": 7,
+          "name": "isInternalApp",
+          "type": "bool"
+        }
+      ]
+    },
     "AuditLogQuery": {
       "kind": "Msg",
       "nextIndex": 7,
@@ -3341,6 +3398,17 @@
             }
           ],
           "returns": "OperatorAppAccessResult",
+          "modifiers": []
+        },
+        "SearchInternalApps": {
+          "args": [
+            {
+              "index": 0,
+              "name": "query",
+              "type": "string"
+            }
+          ],
+          "returns": "InternalAppSearchResult",
           "modifiers": []
         },
         "GetAuditLog": {

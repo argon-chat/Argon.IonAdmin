@@ -40,6 +40,7 @@ service AdminConsole() {
     GrantOperatorAppAccess(input: GrantOperatorAppAccessInput): OperatorAppAccessResult;
     RevokeOperatorAppAccess(operatorId: guid, appId: guid): OperatorActionResult;
     UpdateOperatorAppAccess(input: UpdateOperatorAppAccessInput): OperatorAppAccessResult;
+    SearchInternalApps(query: string): InternalAppSearchResult;
 
     GetAuditLog(query: AuditLogQuery): AuditLogPage;
 
@@ -494,6 +495,21 @@ msg UpdateOperatorAppAccessInput {
 msg OperatorAppAccessResult {
     success: bool;
     error: string?;
+}
+
+msg InternalAppSearchResult {
+    apps: InternalAppInfo[];
+}
+
+msg InternalAppInfo {
+    appId: guid;
+    name: string;
+    clientId: string;
+    description: string?;
+    appType: AdminDevAppType;
+    teamId: guid;
+    teamName: string;
+    isInternalApp: bool;
 }
 
 
