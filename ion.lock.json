@@ -2982,6 +2982,299 @@
         }
       ]
     },
+    "FeatureFlagList": {
+      "kind": "Msg",
+      "nextIndex": 1,
+      "fields": [
+        {
+          "index": 0,
+          "name": "flags",
+          "type": "Array\u003CFeatureFlagSummary\u003E"
+        }
+      ]
+    },
+    "FeatureFlagSummary": {
+      "kind": "Msg",
+      "nextIndex": 9,
+      "fields": [
+        {
+          "index": 0,
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "index": 1,
+          "name": "description",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 2,
+          "name": "defaultEnabled",
+          "type": "bool"
+        },
+        {
+          "index": 3,
+          "name": "rolloutPercentage",
+          "type": "Maybe\u003Ci4\u003E"
+        },
+        {
+          "index": 4,
+          "name": "hasVariants",
+          "type": "bool"
+        },
+        {
+          "index": 5,
+          "name": "ussdActivationCode",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 6,
+          "name": "expiresAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 7,
+          "name": "overrideCount",
+          "type": "i4"
+        },
+        {
+          "index": 8,
+          "name": "createdAt",
+          "type": "datetime"
+        }
+      ]
+    },
+    "FeatureFlagDetails": {
+      "kind": "Msg",
+      "nextIndex": 9,
+      "fields": [
+        {
+          "index": 0,
+          "name": "id",
+          "type": "string"
+        },
+        {
+          "index": 1,
+          "name": "description",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 2,
+          "name": "defaultEnabled",
+          "type": "bool"
+        },
+        {
+          "index": 3,
+          "name": "rolloutPercentage",
+          "type": "Maybe\u003Ci4\u003E"
+        },
+        {
+          "index": 4,
+          "name": "variants",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 5,
+          "name": "ussdActivationCode",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 6,
+          "name": "expiresAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 7,
+          "name": "createdAt",
+          "type": "datetime"
+        },
+        {
+          "index": 8,
+          "name": "overrides",
+          "type": "Array\u003CFeatureFlagOverrideInfo\u003E"
+        }
+      ]
+    },
+    "FeatureFlagOverrideInfo": {
+      "kind": "Msg",
+      "nextIndex": 7,
+      "fields": [
+        {
+          "index": 0,
+          "name": "overrideId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "scope",
+          "type": "i4"
+        },
+        {
+          "index": 2,
+          "name": "targetId",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "enabled",
+          "type": "Maybe\u003Cbool\u003E"
+        },
+        {
+          "index": 4,
+          "name": "rolloutPercentage",
+          "type": "Maybe\u003Ci4\u003E"
+        },
+        {
+          "index": 5,
+          "name": "forcedVariant",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 6,
+          "name": "createdAt",
+          "type": "datetime"
+        }
+      ]
+    },
+    "CreateFeatureFlagInput": {
+      "kind": "Msg",
+      "nextIndex": 7,
+      "fields": [
+        {
+          "index": 0,
+          "name": "flagId",
+          "type": "string"
+        },
+        {
+          "index": 1,
+          "name": "description",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 2,
+          "name": "defaultEnabled",
+          "type": "bool"
+        },
+        {
+          "index": 3,
+          "name": "rolloutPercentage",
+          "type": "Maybe\u003Ci4\u003E"
+        },
+        {
+          "index": 4,
+          "name": "variants",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 5,
+          "name": "ussdActivationCode",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 6,
+          "name": "expiresAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        }
+      ]
+    },
+    "UpdateFeatureFlagInput": {
+      "kind": "Msg",
+      "nextIndex": 7,
+      "fields": [
+        {
+          "index": 0,
+          "name": "flagId",
+          "type": "string"
+        },
+        {
+          "index": 1,
+          "name": "description",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 2,
+          "name": "defaultEnabled",
+          "type": "bool"
+        },
+        {
+          "index": 3,
+          "name": "rolloutPercentage",
+          "type": "Maybe\u003Ci4\u003E"
+        },
+        {
+          "index": 4,
+          "name": "variants",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 5,
+          "name": "ussdActivationCode",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 6,
+          "name": "expiresAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        }
+      ]
+    },
+    "SetFeatureFlagOverrideInput": {
+      "kind": "Msg",
+      "nextIndex": 6,
+      "fields": [
+        {
+          "index": 0,
+          "name": "flagId",
+          "type": "string"
+        },
+        {
+          "index": 1,
+          "name": "scope",
+          "type": "i4"
+        },
+        {
+          "index": 2,
+          "name": "targetId",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "enabled",
+          "type": "Maybe\u003Cbool\u003E"
+        },
+        {
+          "index": 4,
+          "name": "rolloutPercentage",
+          "type": "Maybe\u003Ci4\u003E"
+        },
+        {
+          "index": 5,
+          "name": "forcedVariant",
+          "type": "Maybe\u003Cstring\u003E"
+        }
+      ]
+    },
+    "FeatureFlagActionResult": {
+      "kind": "Msg",
+      "nextIndex": 3,
+      "fields": [
+        {
+          "index": 0,
+          "name": "success",
+          "type": "bool"
+        },
+        {
+          "index": 1,
+          "name": "flagId",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 2,
+          "name": "error",
+          "type": "Maybe\u003Cstring\u003E"
+        }
+      ]
+    },
     "SearchMatchKind": {
       "kind": "Enum",
       "members": {
@@ -3791,6 +4084,77 @@
             }
           ],
           "returns": "AdminUserTrustCard",
+          "modifiers": []
+        },
+        "GetFeatureFlags": {
+          "args": [],
+          "returns": "FeatureFlagList",
+          "modifiers": []
+        },
+        "GetFeatureFlag": {
+          "args": [
+            {
+              "index": 0,
+              "name": "flagId",
+              "type": "string"
+            }
+          ],
+          "returns": "FeatureFlagDetails",
+          "modifiers": []
+        },
+        "CreateFeatureFlag": {
+          "args": [
+            {
+              "index": 0,
+              "name": "input",
+              "type": "CreateFeatureFlagInput"
+            }
+          ],
+          "returns": "FeatureFlagActionResult",
+          "modifiers": []
+        },
+        "UpdateFeatureFlag": {
+          "args": [
+            {
+              "index": 0,
+              "name": "input",
+              "type": "UpdateFeatureFlagInput"
+            }
+          ],
+          "returns": "FeatureFlagActionResult",
+          "modifiers": []
+        },
+        "DeleteFeatureFlag": {
+          "args": [
+            {
+              "index": 0,
+              "name": "flagId",
+              "type": "string"
+            }
+          ],
+          "returns": "FeatureFlagActionResult",
+          "modifiers": []
+        },
+        "SetFeatureFlagOverride": {
+          "args": [
+            {
+              "index": 0,
+              "name": "input",
+              "type": "SetFeatureFlagOverrideInput"
+            }
+          ],
+          "returns": "FeatureFlagActionResult",
+          "modifiers": []
+        },
+        "DeleteFeatureFlagOverride": {
+          "args": [
+            {
+              "index": 0,
+              "name": "overrideId",
+              "type": "guid"
+            }
+          ],
+          "returns": "FeatureFlagActionResult",
           "modifiers": []
         }
       }
