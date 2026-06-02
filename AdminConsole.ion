@@ -76,6 +76,14 @@ service AdminConsole() {
     AssignReport(reportId: guid, operatorId: guid): UserActionResult;
     GetUserTrustCard(userId: guid): AdminUserTrustCard;
     RecalculateUserTrust(userId: guid): AdminUserTrustCard;
+
+    GetFeatureFlags(): FeatureFlagList;
+    GetFeatureFlag(flagId: string): FeatureFlagDetails;
+    CreateFeatureFlag(input: CreateFeatureFlagInput): FeatureFlagActionResult;
+    UpdateFeatureFlag(input: UpdateFeatureFlagInput): FeatureFlagActionResult;
+    DeleteFeatureFlag(flagId: string): FeatureFlagActionResult;
+    SetFeatureFlagOverride(input: SetFeatureFlagOverrideInput): FeatureFlagActionResult;
+    DeleteFeatureFlagOverride(overrideId: guid): FeatureFlagActionResult;
 }
 
 msg SearchUserResult {
@@ -887,4 +895,79 @@ msg AdminUserTrustCard {
     autoActionsApplied: i4;
     accountAge: duration;
     lastActivity: datetime;
+}
+
+
+// scope: FeatureFlagScope values — Global=0, Client=10, Country=20, User=30
+msg FeatureFlagList {
+    flags: FeatureFlagSummary[];
+}
+
+msg FeatureFlagSummary {
+    id: string;
+    description: string?;
+    defaultEnabled: bool;
+    rolloutPercentage: i4?;
+    hasVariants: bool;
+    ussdActivationCode: string?;
+    expiresAt: datetime?;
+    overrideCount: i4;
+    createdAt: datetime;
+}
+
+msg FeatureFlagDetails {
+    id: string;
+    description: string?;
+    defaultEnabled: bool;
+    rolloutPercentage: i4?;
+    variants: string?;
+    ussdActivationCode: string?;
+    expiresAt: datetime?;
+    createdAt: datetime;
+    overrides: FeatureFlagOverrideInfo[];
+}
+
+msg FeatureFlagOverrideInfo {
+    overrideId: guid;
+    scope: i4;
+    targetId: string;
+    enabled: bool?;
+    rolloutPercentage: i4?;
+    forcedVariant: string?;
+    createdAt: datetime;
+}
+
+msg CreateFeatureFlagInput {
+    flagId: string;
+    description: string?;
+    defaultEnabled: bool;
+    rolloutPercentage: i4?;
+    variants: string?;
+    ussdActivationCode: string?;
+    expiresAt: datetime?;
+}
+
+msg UpdateFeatureFlagInput {
+    flagId: string;
+    description: string?;
+    defaultEnabled: bool;
+    rolloutPercentage: i4?;
+    variants: string?;
+    ussdActivationCode: string?;
+    expiresAt: datetime?;
+}
+
+msg SetFeatureFlagOverrideInput {
+    flagId: string;
+    scope: i4;
+    targetId: string;
+    enabled: bool?;
+    rolloutPercentage: i4?;
+    forcedVariant: string?;
+}
+
+msg FeatureFlagActionResult {
+    success: bool;
+    flagId: string?;
+    error: string?;
 }
