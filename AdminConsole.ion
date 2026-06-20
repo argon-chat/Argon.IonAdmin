@@ -84,6 +84,12 @@ service AdminConsole() {
     DeleteFeatureFlag(flagId: string): FeatureFlagActionResult;
     SetFeatureFlagOverride(input: SetFeatureFlagOverrideInput): FeatureFlagActionResult;
     DeleteFeatureFlagOverride(overrideId: guid): FeatureFlagActionResult;
+
+    GetTenantDirectory(): TenantDirectoryList;
+    CreateTenant(input: CreateTenantInput): TenantActionResult;
+    UpdateTenant(input: UpdateTenantInput): TenantActionResult;
+    SetTenantVerified(tenantId: guid, isVerified: bool): TenantActionResult;
+    DeleteTenant(tenantId: guid): TenantActionResult;
 }
 
 msg SearchUserResult {
@@ -969,5 +975,43 @@ msg SetFeatureFlagOverrideInput {
 msg FeatureFlagActionResult {
     success: bool;
     flagId: string?;
+    error: string?;
+}
+
+
+// Self-hosted / enterprise tenant directory: email domain -> managed instance URL.
+msg TenantDirectoryList {
+    tenants: TenantInfo[];
+}
+
+msg TenantInfo {
+    tenantId: guid;
+    domain: string;
+    instanceUrl: string;
+    isVerified: bool;
+    orgName: string?;
+    ownerUserId: guid?;
+    notes: string?;
+    createdAt: datetime;
+}
+
+msg CreateTenantInput {
+    domain: string;
+    instanceUrl: string;
+    orgName: string?;
+    ownerUserId: guid?;
+    notes: string?;
+}
+
+msg UpdateTenantInput {
+    tenantId: guid;
+    instanceUrl: string;
+    orgName: string?;
+    notes: string?;
+}
+
+msg TenantActionResult {
+    success: bool;
+    tenantId: guid?;
     error: string?;
 }
