@@ -1235,8 +1235,8 @@
         },
         {
           "index": 6,
-          "name": "certificate",
-          "type": "Maybe\u003COperatorCertificateInfo\u003E"
+          "name": "certificates",
+          "type": "Array\u003COperatorCertificateInfo\u003E"
         },
         {
           "index": 7,
@@ -1252,37 +1252,62 @@
     },
     "OperatorCertificateInfo": {
       "kind": "Msg",
-      "nextIndex": 6,
+      "nextIndex": 11,
       "fields": [
         {
           "index": 0,
+          "name": "certificateId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
           "name": "serialNumber",
           "type": "string"
         },
         {
-          "index": 1,
+          "index": 2,
           "name": "thumbprint",
           "type": "string"
         },
         {
-          "index": 2,
+          "index": 3,
           "name": "subject",
           "type": "string"
         },
         {
-          "index": 3,
+          "index": 4,
           "name": "notBefore",
           "type": "datetime"
         },
         {
-          "index": 4,
+          "index": 5,
           "name": "notAfter",
           "type": "datetime"
         },
         {
-          "index": 5,
+          "index": 6,
           "name": "isExpired",
           "type": "bool"
+        },
+        {
+          "index": 7,
+          "name": "isRevoked",
+          "type": "bool"
+        },
+        {
+          "index": 8,
+          "name": "enrolledAt",
+          "type": "datetime"
+        },
+        {
+          "index": 9,
+          "name": "deviceName",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 10,
+          "name": "deviceSerialNumber",
+          "type": "Maybe\u003Cstring\u003E"
         }
       ]
     },
@@ -1377,7 +1402,7 @@
     },
     "EnrollCertificateResult": {
       "kind": "Msg",
-      "nextIndex": 6,
+      "nextIndex": 8,
       "fields": [
         {
           "index": 0,
@@ -1386,26 +1411,36 @@
         },
         {
           "index": 1,
+          "name": "certificateId",
+          "type": "Maybe\u003Cguid\u003E"
+        },
+        {
+          "index": 2,
           "name": "certificatePem",
           "type": "Maybe\u003Cstring\u003E"
         },
         {
-          "index": 2,
+          "index": 3,
           "name": "caChainPem",
           "type": "Maybe\u003Cstring\u003E"
         },
         {
-          "index": 3,
+          "index": 4,
           "name": "serialNumber",
           "type": "Maybe\u003Cstring\u003E"
         },
         {
-          "index": 4,
+          "index": 5,
+          "name": "thumbprint",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 6,
           "name": "notAfter",
           "type": "Maybe\u003Cdatetime\u003E"
         },
         {
-          "index": 5,
+          "index": 7,
           "name": "error",
           "type": "Maybe\u003Cstring\u003E"
         }
@@ -3756,7 +3791,7 @@
           "args": [
             {
               "index": 0,
-              "name": "operatorId",
+              "name": "certificateId",
               "type": "guid"
             }
           ],
@@ -3774,6 +3809,16 @@
               "index": 1,
               "name": "csrPem",
               "type": "string"
+            },
+            {
+              "index": 2,
+              "name": "deviceName",
+              "type": "Maybe\u003Cstring\u003E"
+            },
+            {
+              "index": 3,
+              "name": "deviceSerialNumber",
+              "type": "Maybe\u003Cstring\u003E"
             }
           ],
           "returns": "EnrollCertificateResult",

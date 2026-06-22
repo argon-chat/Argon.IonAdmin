@@ -33,8 +33,8 @@ service AdminConsole() {
     CreateOperator(input: CreateOperatorInput): CreateOperatorResult;
     DeactivateOperator(operatorId: guid): OperatorActionResult;
     ActivateOperator(operatorId: guid): OperatorActionResult;
-    RevokeOperatorCertificate(operatorId: guid): OperatorActionResult;
-    EnrollOperatorCertificate(operatorId: guid, csrPem: string): EnrollCertificateResult;
+    RevokeOperatorCertificate(certificateId: guid): OperatorActionResult;
+    EnrollOperatorCertificate(operatorId: guid, csrPem: string, deviceName: string?, deviceSerialNumber: string?): EnrollCertificateResult;
     
     GetOperatorAppAccess(operatorId: guid): OperatorAppAccessList;
     GrantOperatorAppAccess(input: GrantOperatorAppAccessInput): OperatorAppAccessResult;
@@ -426,18 +426,23 @@ msg OperatorInfo {
     userId: guid?;
     isActive: bool;
     isSystemOperator: bool;
-    certificate: OperatorCertificateInfo?;
+    certificates: OperatorCertificateInfo[];
     lastAuthAt: datetime?;
     createdAt: datetime;
 }
 
 msg OperatorCertificateInfo {
+    certificateId: guid;
     serialNumber: string;
     thumbprint: string;
     subject: string;
     notBefore: datetime;
     notAfter: datetime;
     isExpired: bool;
+    isRevoked: bool;
+    enrolledAt: datetime;
+    deviceName: string?;
+    deviceSerialNumber: string?;
 }
 
 msg OperatorDetails {
@@ -467,9 +472,11 @@ msg OperatorActionResult {
 
 msg EnrollCertificateResult {
     success: bool;
+    certificateId: guid?;
     certificatePem: string?;
     caChainPem: string?;
     serialNumber: string?;
+    thumbprint: string?;
     notAfter: datetime?;
     error: string?;
 }
