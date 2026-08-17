@@ -3445,6 +3445,115 @@
         }
       ]
     },
+    "DeviceSummary": {
+      "kind": "Msg",
+      "nextIndex": 8,
+      "fields": [
+        {
+          "index": 0,
+          "name": "deviceId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "platform",
+          "type": "i4"
+        },
+        {
+          "index": 2,
+          "name": "assurance",
+          "type": "i4"
+        },
+        {
+          "index": 3,
+          "name": "clientName",
+          "type": "string"
+        },
+        {
+          "index": 4,
+          "name": "enrolledAt",
+          "type": "datetime"
+        },
+        {
+          "index": 5,
+          "name": "lastProvenAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 6,
+          "name": "linkedAccounts",
+          "type": "i4"
+        },
+        {
+          "index": 7,
+          "name": "isBanned",
+          "type": "bool"
+        }
+      ]
+    },
+    "DeviceList": {
+      "kind": "Msg",
+      "nextIndex": 1,
+      "fields": [
+        {
+          "index": 0,
+          "name": "devices",
+          "type": "Array\u003CDeviceSummary\u003E"
+        }
+      ]
+    },
+    "DeviceAccount": {
+      "kind": "Msg",
+      "nextIndex": 7,
+      "fields": [
+        {
+          "index": 0,
+          "name": "userId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "username",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "displayName",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "firstSeenAt",
+          "type": "datetime"
+        },
+        {
+          "index": 4,
+          "name": "lastSeenAt",
+          "type": "datetime"
+        },
+        {
+          "index": 5,
+          "name": "logins",
+          "type": "i4"
+        },
+        {
+          "index": 6,
+          "name": "isBlocked",
+          "type": "bool"
+        }
+      ]
+    },
+    "DeviceAccountList": {
+      "kind": "Msg",
+      "nextIndex": 1,
+      "fields": [
+        {
+          "index": 0,
+          "name": "accounts",
+          "type": "Array\u003CDeviceAccount\u003E"
+        }
+      ]
+    },
     "SearchMatchKind": {
       "kind": "Enum",
       "members": {
@@ -3728,6 +3837,60 @@
               "index": 1,
               "name": "newEmail",
               "type": "string"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "GetUserDevices": {
+          "args": [
+            {
+              "index": 0,
+              "name": "userId",
+              "type": "guid"
+            }
+          ],
+          "returns": "DeviceList",
+          "modifiers": []
+        },
+        "GetDeviceAccounts": {
+          "args": [
+            {
+              "index": 0,
+              "name": "deviceId",
+              "type": "guid"
+            }
+          ],
+          "returns": "DeviceAccountList",
+          "modifiers": []
+        },
+        "BanDevice": {
+          "args": [
+            {
+              "index": 0,
+              "name": "deviceId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "reason",
+              "type": "string"
+            },
+            {
+              "index": 2,
+              "name": "expiration",
+              "type": "Maybe\u003Cdatetime\u003E"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "UnbanDevice": {
+          "args": [
+            {
+              "index": 0,
+              "name": "deviceId",
+              "type": "guid"
             }
           ],
           "returns": "UserActionResult",

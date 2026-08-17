@@ -25,6 +25,19 @@ service AdminConsole() {
     RemoveTwoFactor(userId: guid): UserActionResult;
     RemovePhoneNumber(userId: guid): UserActionResult;
     ChangeEmail(userId: guid, newEmail: string): UserActionResult;
+
+    // Barring a machine rather than an account. Only devices that enrolled a hardware key can be
+    // barred at all — those are the ones the server can recognise on sight, and a ban on anything
+    // weaker would be shed by editing a cookie.
+    //
+    // GetDeviceAccounts is what makes this usable rather than blind: it lists everyone who has
+    // signed in from the machine, which is the evidence a ban is decided on and the collateral it
+    // will cause. A shared computer looks exactly like an alt farm from here, so a person should
+    // read the list before deciding.
+    GetUserDevices(userId: guid): DeviceList;
+    GetDeviceAccounts(deviceId: guid): DeviceAccountList;
+    BanDevice(deviceId: guid, reason: string, expiration: datetime?): UserActionResult;
+    UnbanDevice(deviceId: guid): UserActionResult;
     
     GetDiagnostics(): DiagnosticsResult;
     
@@ -1021,4 +1034,37 @@ msg TenantActionResult {
     success: bool;
     tenantId: guid?;
     error: string?;
+}
+// One machine, as the console sees it.
+msg DeviceSummary {
+    deviceId: guid;
+    platform: i4;
+    // 0 none, 1 key, 2 attested. An attested device is one the platform vouched for; a ban on it is
+    // as solid as this system gets, while KEY only means the key cannot be copied.
+    assurance: i4;
+    clientName: string;
+    enrolledAt: datetime;
+    lastProvenAt: datetime?;
+    // How many distinct accounts have signed in from it. Above one this is a signal and not a
+    // verdict — a family computer and an alt farm are indistinguishable from here.
+    linkedAccounts: i4;
+    isBanned: bool;
+}
+
+msg DeviceList {
+    devices: DeviceSummary[];
+}
+
+msg DeviceAccount {
+    userId: guid;
+    username: string;
+    displayName: string;
+    firstSeenAt: datetime;
+    lastSeenAt: datetime;
+    logins: i4;
+    isBlocked: bool;
+}
+
+msg DeviceAccountList {
+    accounts: DeviceAccount[];
 }
