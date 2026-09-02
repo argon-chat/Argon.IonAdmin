@@ -83,12 +83,24 @@ service AdminConsole() {
     BeginUploadUserAvatar(userId: guid): UploadFileResult;
     CompleteUploadUserAvatar(userId: guid, blobId: guid): UserActionResult;
 
+    // Individual reports. Kept for the console that already reads them; ResolveReport and
+    // AssignReport act on the report's *case* — every report about the same thing shares one — so
+    // resolving any of them resolves them all.
     GetReports(status: ReportStatus?, category: ReportCategory?, limit: i4, offset: i4): AdminReportPage;
     GetReportById(reportId: guid): AdminReportEntry;
     ResolveReport(input: ResolveReportInput): UserActionResult;
     AssignReport(reportId: guid, operatorId: guid): UserActionResult;
     GetUserTrustCard(userId: guid): AdminUserTrustCard;
     RecalculateUserTrust(userId: guid): AdminUserTrustCard;
+
+    // Cases — the unit a moderator works. One case per reported thing, ordered by priority, with
+    // the content as it was when first reported, and an action that is applied when the case is
+    // resolved rather than recorded and forgotten.
+    GetReportCases(status: ReportStatus?, category: ReportCategory?, limit: i4, offset: i4): AdminReportCasePage;
+    GetReportCase(caseId: guid): AdminReportCaseDetails;
+    AssignReportCase(caseId: guid, operatorId: guid): UserActionResult;
+    ResolveReportCase(input: ResolveReportCaseInput): UserActionResult;
+    ReopenReportCase(caseId: guid, note: string?): UserActionResult;
 
     GetFeatureFlags(): FeatureFlagList;
     GetFeatureFlag(flagId: string): FeatureFlagDetails;
@@ -868,6 +880,19 @@ msg AdminTransactionItemInfo {
 }
 
 
+// What resolving a case does to its target. Applied by the server when the case is resolved, not
+// merely recorded. Durations come from the deployment's ReportSystem:Actions section.
+//
+//   WARN_USER            a system notification to the author; nothing else changes.
+//   MUTE_USER            a middle-severity lockdown (INCITING_MOMENT) for Actions:MuteDays.
+//   RESTRICT_USER        a middle-severity lockdown (UNDER_INVESTIGATION) for Actions:RestrictDays.
+//   BAN_USER             a critical lockdown (TOS_VIOLATION) for Actions:BanDays, permanent at 0.
+//   DELETE_CONTENT       soft-deletes the reported message. The row and the case snapshot survive.
+//   QUARANTINE_CONTENT   the same removal as DELETE_CONTENT, recorded under this name so a later
+//                        review can tell "taken down pending review" from "taken down".
+//
+// A lockdown never weakens one already in place, and user actions are refused on cases whose
+// target is a space or a channel.
 enum ReportActionKind {
     NONE,
     WARN_USER,
@@ -901,10 +926,65 @@ msg AdminReportEntry {
     resolutionNote: string?;
     createdAt: datetime;
     resolvedAt: datetime?;
+    caseId: guid?;
+    priorityScore: i4;
+    escalationRule: string?;
+    isIndependent: bool;
 }
 
 msg ResolveReportInput {
     reportId: guid;
+    status: ReportStatus;
+    resolutionNote: string?;
+    applyAction: ReportActionKind;
+}
+
+// One reported thing, however many people reported it.
+msg AdminReportCaseSummary {
+    caseId: guid;
+    target: ReportTarget;
+    targetDisplayName: string;
+    status: ReportStatus;
+    topCategory: ReportCategory;
+    priorityScore: i4;
+    reportCount: i4;
+    // Reporters that do not share an address, a device or a fresh account between them. This is
+    // the number escalation is decided on; reportCount is what the queue shows.
+    independentReporterCount: i4;
+    isEscalated: bool;
+    escalationRule: string?;
+    assignedOperatorId: guid?;
+    firstReportedAt: datetime;
+    lastReportedAt: datetime;
+    resolvedAt: datetime?;
+    appliedAction: ReportActionKind;
+}
+
+msg AdminReportCasePage {
+    cases: AdminReportCaseSummary[];
+    totalCount: i4;
+    offset: i4;
+    limit: i4;
+}
+
+msg AdminReportCaseDetails {
+    summary: AdminReportCaseSummary;
+    // The content as it stood when the case was opened, as JSON — text and entities of a message,
+    // the profile fields of a user, the name and description of a space. Survives the author
+    // editing or deleting the original.
+    contentSnapshot: string?;
+    reports: AdminReportEntry[];
+    resolutionNote: string?;
+    resolvedByOperatorId: guid?;
+    targetTrustScore: i4?;
+}
+
+// status must be one of RESOLVED_ACTION_TAKEN, RESOLVED_NO_ACTION or DISMISSED; an action other
+// than NONE requires RESOLVED_ACTION_TAKEN. DISMISSED is the one that counts against the
+// reporters — use it for bogus or malicious reports, and RESOLVED_NO_ACTION for honest ones that
+// turned out not to be violations.
+msg ResolveReportCaseInput {
+    caseId: guid;
     status: ReportStatus;
     resolutionNote: string?;
     applyAction: ReportActionKind;
