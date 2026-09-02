@@ -2861,7 +2861,7 @@
     },
     "AdminReportEntry": {
       "kind": "Msg",
-      "nextIndex": 14,
+      "nextIndex": 18,
       "fields": [
         {
           "index": 0,
@@ -2932,6 +2932,26 @@
           "index": 13,
           "name": "resolvedAt",
           "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 14,
+          "name": "caseId",
+          "type": "Maybe\u003Cguid\u003E"
+        },
+        {
+          "index": 15,
+          "name": "priorityScore",
+          "type": "i4"
+        },
+        {
+          "index": 16,
+          "name": "escalationRule",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 17,
+          "name": "isIndependent",
+          "type": "bool"
         }
       ]
     },
@@ -2942,6 +2962,175 @@
         {
           "index": 0,
           "name": "reportId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "status",
+          "type": "ReportStatus"
+        },
+        {
+          "index": 2,
+          "name": "resolutionNote",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 3,
+          "name": "applyAction",
+          "type": "ReportActionKind"
+        }
+      ]
+    },
+    "AdminReportCaseSummary": {
+      "kind": "Msg",
+      "nextIndex": 15,
+      "fields": [
+        {
+          "index": 0,
+          "name": "caseId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "target",
+          "type": "ReportTarget"
+        },
+        {
+          "index": 2,
+          "name": "targetDisplayName",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "status",
+          "type": "ReportStatus"
+        },
+        {
+          "index": 4,
+          "name": "topCategory",
+          "type": "ReportCategory"
+        },
+        {
+          "index": 5,
+          "name": "priorityScore",
+          "type": "i4"
+        },
+        {
+          "index": 6,
+          "name": "reportCount",
+          "type": "i4"
+        },
+        {
+          "index": 7,
+          "name": "independentReporterCount",
+          "type": "i4"
+        },
+        {
+          "index": 8,
+          "name": "isEscalated",
+          "type": "bool"
+        },
+        {
+          "index": 9,
+          "name": "escalationRule",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 10,
+          "name": "assignedOperatorId",
+          "type": "Maybe\u003Cguid\u003E"
+        },
+        {
+          "index": 11,
+          "name": "firstReportedAt",
+          "type": "datetime"
+        },
+        {
+          "index": 12,
+          "name": "lastReportedAt",
+          "type": "datetime"
+        },
+        {
+          "index": 13,
+          "name": "resolvedAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 14,
+          "name": "appliedAction",
+          "type": "ReportActionKind"
+        }
+      ]
+    },
+    "AdminReportCasePage": {
+      "kind": "Msg",
+      "nextIndex": 4,
+      "fields": [
+        {
+          "index": 0,
+          "name": "cases",
+          "type": "Array\u003CAdminReportCaseSummary\u003E"
+        },
+        {
+          "index": 1,
+          "name": "totalCount",
+          "type": "i4"
+        },
+        {
+          "index": 2,
+          "name": "offset",
+          "type": "i4"
+        },
+        {
+          "index": 3,
+          "name": "limit",
+          "type": "i4"
+        }
+      ]
+    },
+    "AdminReportCaseDetails": {
+      "kind": "Msg",
+      "nextIndex": 6,
+      "fields": [
+        {
+          "index": 0,
+          "name": "summary",
+          "type": "AdminReportCaseSummary"
+        },
+        {
+          "index": 1,
+          "name": "contentSnapshot",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 2,
+          "name": "reports",
+          "type": "Array\u003CAdminReportEntry\u003E"
+        },
+        {
+          "index": 3,
+          "name": "resolutionNote",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 4,
+          "name": "resolvedByOperatorId",
+          "type": "Maybe\u003Cguid\u003E"
+        },
+        {
+          "index": 5,
+          "name": "targetTrustScore",
+          "type": "Maybe\u003Ci4\u003E"
+        }
+      ]
+    },
+    "ResolveReportCaseInput": {
+      "kind": "Msg",
+      "nextIndex": 4,
+      "fields": [
+        {
+          "index": 0,
+          "name": "caseId",
           "type": "guid"
         },
         {
@@ -4427,6 +4616,86 @@
             }
           ],
           "returns": "AdminUserTrustCard",
+          "modifiers": []
+        },
+        "GetReportCases": {
+          "args": [
+            {
+              "index": 0,
+              "name": "status",
+              "type": "Maybe\u003CReportStatus\u003E"
+            },
+            {
+              "index": 1,
+              "name": "category",
+              "type": "Maybe\u003CReportCategory\u003E"
+            },
+            {
+              "index": 2,
+              "name": "limit",
+              "type": "i4"
+            },
+            {
+              "index": 3,
+              "name": "offset",
+              "type": "i4"
+            }
+          ],
+          "returns": "AdminReportCasePage",
+          "modifiers": []
+        },
+        "GetReportCase": {
+          "args": [
+            {
+              "index": 0,
+              "name": "caseId",
+              "type": "guid"
+            }
+          ],
+          "returns": "AdminReportCaseDetails",
+          "modifiers": []
+        },
+        "AssignReportCase": {
+          "args": [
+            {
+              "index": 0,
+              "name": "caseId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "operatorId",
+              "type": "guid"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "ResolveReportCase": {
+          "args": [
+            {
+              "index": 0,
+              "name": "input",
+              "type": "ResolveReportCaseInput"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "ReopenReportCase": {
+          "args": [
+            {
+              "index": 0,
+              "name": "caseId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "note",
+              "type": "Maybe\u003Cstring\u003E"
+            }
+          ],
+          "returns": "UserActionResult",
           "modifiers": []
         },
         "GetFeatureFlags": {
