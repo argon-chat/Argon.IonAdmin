@@ -3764,7 +3764,8 @@
         "IosMobile": "4",
         "AndroidMobile": "5",
         "Xbox": "6",
-        "SteamDevice": "7"
+        "SteamDevice": "7",
+        "LinuxDesktop": "8"
       },
       "baseType": "u4"
     },
