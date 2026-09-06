@@ -110,6 +110,19 @@ service AdminConsole() {
     SetFeatureFlagOverride(input: SetFeatureFlagOverrideInput): FeatureFlagActionResult;
     DeleteFeatureFlagOverride(overrideId: guid): FeatureFlagActionResult;
 
+    // The inactivity queue. The daily sweep no longer deletes dormant accounts — it proposes them here
+    // and somebody decides. Approve schedules the deletion through the same guarded path a person's own
+    // request takes (lockdown, subscription, owned spaces and a standing refusal all still bar it), and
+    // the account gets the notice mail and the usual grace period from that moment. Reject drops the
+    // entry and keeps the sweep off that account for a full inactivity period.
+    //
+    // Entries are a projection of the last sweep, not a ledger: one that signs in again stops being a
+    // candidate and disappears on the next pass, so an operator never acts on a stale proposal. Both
+    // decisions are recorded in the operator audit log.
+    GetAccountDeletionQueue(offset: i4, limit: i4): AccountDeletionQueuePage;
+    ApproveAccountDeletion(userId: guid): UserActionResult;
+    RejectAccountDeletion(userId: guid): UserActionResult;
+
     GetTenantDirectory(): TenantDirectoryList;
     CreateTenant(input: CreateTenantInput): TenantActionResult;
     UpdateTenant(input: UpdateTenantInput): TenantActionResult;
@@ -1148,4 +1161,47 @@ msg DeviceAccount {
 
 msg DeviceAccountList {
     accounts: DeviceAccount[];
+}
+
+
+// ── The inactivity deletion queue ───────────────────────────────────────────────────────────────
+
+msg AccountDeletionQueuePage {
+    entries: AccountDeletionQueueEntry[];
+    totalCount: i4;
+    offset: i4;
+    limit: i4;
+}
+
+// One dormant account the sweep proposes for deletion, with the arithmetic that selected it — an
+// operator approving this is erasing somebody's account, and "silent since" plus "the threshold it
+// was measured against" is the minimum needed to tell a real candidate from a mistake.
+msg AccountDeletionQueueEntry {
+    userId: guid;
+    username: string;
+    displayName: string;
+    email: string;
+    // Newest login, or the account's creation date when it has never signed in.
+    lastActivityAt: datetime;
+    // The threshold the sweep measured against: the platform default, or a shorter one the account
+    // holder chose for itself — which is what `reason` distinguishes.
+    thresholdMonths: i4;
+    reason: string;
+    // When the account first entered the queue. Kept across sweeps, so a backlog shows its age.
+    enqueuedAt: datetime;
+    state: AccountDeletionQueueEntryState;
+    decidedByOperatorId: guid?;
+    decidedByOperatorEmail: string?;
+    decidedAt: datetime?;
+    // When an approved deletion executes. The account can still cancel it from its own console
+    // until then.
+    scheduledDeletionAt: datetime?;
+}
+
+enum AccountDeletionQueueEntryState {
+    // Waiting for an operator.
+    PENDING,
+    // Approved and scheduled. The entry stays until that deletion is over — executed, or cancelled
+    // by the account holder inside the grace period.
+    APPROVED
 }
