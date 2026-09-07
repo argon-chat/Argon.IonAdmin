@@ -3771,7 +3771,7 @@
     },
     "AccountDeletionQueueEntry": {
       "kind": "Msg",
-      "nextIndex": 14,
+      "nextIndex": 15,
       "fields": [
         {
           "index": 0,
@@ -3841,6 +3841,11 @@
         {
           "index": 13,
           "name": "strandedSince",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 14,
+          "name": "completedAt",
           "type": "Maybe\u003Cdatetime\u003E"
         }
       ]
@@ -4014,7 +4019,8 @@
       "members": {
         "PENDING": "0",
         "APPROVED": "1",
-        "STRANDED": "2"
+        "STRANDED": "2",
+        "COMPLETED": "3"
       },
       "baseType": "u4"
     },

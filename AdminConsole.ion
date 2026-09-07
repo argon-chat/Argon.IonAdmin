@@ -1214,6 +1214,11 @@ msg AccountDeletionQueueEntry {
     // because an operator scanning their own approvals should not have to visit a second screen to
     // find out that one of them broke.
     strandedSince: datetime?;
+    // When the erasure this entry authorised finished. Null on every entry whose deletion has not run.
+    // It is what the row's own lifetime is measured from — a completed entry is kept for
+    // `AccountDeletion:DecisionRetention` after this instant and then leaves the queue — so it is the
+    // only field that tells an operator how long the record they are reading will still be there.
+    completedAt: datetime?;
 }
 
 enum AccountDeletionQueueEntryState {
@@ -1241,7 +1246,23 @@ enum AccountDeletionQueueEntryState {
     // the `--update-lock` that clears it is the promise that every reader is regenerated. The
     // operator console is a separate repository and has to be regenerated with this change; the
     // account and desktop clients never see this enum.
-    STRANDED
+    STRANDED,
+    // The erasure ran to the end. Nothing is owed on this row: it is the record of a decision that took
+    // effect, kept for `AccountDeletion:DecisionRetention` after `completedAt` and then retired.
+    //
+    // Appended for the same reason STRANDED was, one step further along the same lifecycle. The queue is
+    // a projection of the daily sweep and a finished erasure takes its account out of the sweep's reach
+    // for ever — the row is anonymised — so the entry used to be dropped by the first reconciliation
+    // after the deletion completed, which is anywhere between a second and a day later. The one moment an
+    // operator looks for the outcome of their own approval was the one moment the queue could not show
+    // it, and no other screen can: the account behind it is a tombstone by then.
+    //
+    // A member rather than a `completedAt` that APPROVED rows may or may not carry, because the badge is
+    // what gets read (defect F9): "Approved" against an erasure that finished last week is
+    // indistinguishable from one still inside its grace period, where the account holder can still call
+    // it off. An approval the holder *did* call off never arrives here — its entry is retired at once,
+    // since rendering a living account as erased is a worse lie than losing the row.
+    COMPLETED
 }
 
 // One erasure that gave up half way, and everything an operator needs before deciding to resume it.
