@@ -3911,6 +3911,87 @@
         }
       ]
     },
+    "AutoDeleteScanStatus": {
+      "kind": "Msg",
+      "nextIndex": 15,
+      "fields": [
+        {
+          "index": 0,
+          "name": "enabled",
+          "type": "bool"
+        },
+        {
+          "index": 1,
+          "name": "armedAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 2,
+          "name": "nextDueAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 3,
+          "name": "lastStartedAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 4,
+          "name": "lastFinishedAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 5,
+          "name": "lastTrigger",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 6,
+          "name": "runs",
+          "type": "i4"
+        },
+        {
+          "index": 7,
+          "name": "lastProcessed",
+          "type": "i4"
+        },
+        {
+          "index": 8,
+          "name": "lastProposed",
+          "type": "i4"
+        },
+        {
+          "index": 9,
+          "name": "lastEnqueued",
+          "type": "i4"
+        },
+        {
+          "index": 10,
+          "name": "lastRetired",
+          "type": "i4"
+        },
+        {
+          "index": 11,
+          "name": "lastHeld",
+          "type": "i4"
+        },
+        {
+          "index": 12,
+          "name": "lastQueueLength",
+          "type": "i4"
+        },
+        {
+          "index": 13,
+          "name": "lastError",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 14,
+          "name": "lastErrorAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        }
+      ]
+    },
     "StrandedAccountDeletionPage": {
       "kind": "Msg",
       "nextIndex": 4,
@@ -5029,6 +5110,49 @@
           "modifiers": []
         },
         "ResumeAccountDeletion": {
+          "args": [
+            {
+              "index": 0,
+              "name": "userId",
+              "type": "guid"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "GetAutoDeleteScanStatus": {
+          "args": [],
+          "returns": "AutoDeleteScanStatus",
+          "modifiers": []
+        },
+        "RunAutoDeleteScan": {
+          "args": [],
+          "returns": "AutoDeleteScanStatus",
+          "modifiers": []
+        },
+        "StartAccountDeletion": {
+          "args": [
+            {
+              "index": 0,
+              "name": "userId",
+              "type": "guid"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "ExpireAccountDeletionGrace": {
+          "args": [
+            {
+              "index": 0,
+              "name": "userId",
+              "type": "guid"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "EraseAccountNow": {
           "args": [
             {
               "index": 0,

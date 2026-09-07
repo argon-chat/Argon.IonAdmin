@@ -136,6 +136,29 @@ service AdminConsole() {
     GetStrandedAccountDeletions(offset: i4, limit: i4): StrandedAccountDeletionPage;
     ResumeAccountDeletion(userId: guid): UserActionResult;
 
+    // The sweep itself, which is otherwise invisible: it leaves log lines and the queue it reconciles,
+    // and neither answers "did a pass happen, and when is the next one". An empty queue reads the same
+    // whether nothing was proposable or nothing ran — production spent a day in the second state.
+    // Forcing a pass runs whatever the AutoDeleteEnabled switch says, because the switch governs the
+    // timer and not the button, and a pass only ever writes to the queue.
+    GetAutoDeleteScanStatus(): AutoDeleteScanStatus;
+    RunAutoDeleteScan(): AutoDeleteScanStatus;
+
+    // Deletion driven directly, for an account nobody proposed. Three steps of the same workflow, each
+    // its own button because each is a different decision:
+    //
+    //   StartAccountDeletion       arms the ordinary countdown and sends the notice now. The account
+    //                              can still cancel from its console or by signing in.
+    //   ExpireAccountDeletionGrace brings an already-armed erasure forward to now. The warning mails
+    //                              still owed are marked spent rather than posted after the fact.
+    //   EraseAccountNow            erases immediately and tells the account nothing at all.
+    //
+    // Every bar still stands for all three — a bot or the platform account, a live subscription, an
+    // owned space, a standing lockdown — and all three are audited.
+    StartAccountDeletion(userId: guid): UserActionResult;
+    ExpireAccountDeletionGrace(userId: guid): UserActionResult;
+    EraseAccountNow(userId: guid): UserActionResult;
+
     GetTenantDirectory(): TenantDirectoryList;
     CreateTenant(input: CreateTenantInput): TenantActionResult;
     UpdateTenant(input: UpdateTenantInput): TenantActionResult;
@@ -1283,6 +1306,24 @@ msg StrandedAccountDeletion {
     // The failure the last attempt ended on, and how many attempts were spent reaching it.
     failureReason: string?;
     executionAttempts: i4;
+}
+
+msg AutoDeleteScanStatus {
+    enabled: bool;
+    armedAt: datetime?;
+    nextDueAt: datetime?;
+    lastStartedAt: datetime?;
+    lastFinishedAt: datetime?;
+    lastTrigger: string?;
+    runs: i4;
+    lastProcessed: i4;
+    lastProposed: i4;
+    lastEnqueued: i4;
+    lastRetired: i4;
+    lastHeld: i4;
+    lastQueueLength: i4;
+    lastError: string?;
+    lastErrorAt: datetime?;
 }
 
 msg StrandedAccountDeletionPage {
