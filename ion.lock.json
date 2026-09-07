@@ -3911,6 +3911,150 @@
         }
       ]
     },
+    "EmailJournalPage": {
+      "kind": "Msg",
+      "nextIndex": 4,
+      "fields": [
+        {
+          "index": 0,
+          "name": "entries",
+          "type": "Array\u003CEmailJournalEntry\u003E"
+        },
+        {
+          "index": 1,
+          "name": "totalCount",
+          "type": "i8"
+        },
+        {
+          "index": 2,
+          "name": "offset",
+          "type": "i4"
+        },
+        {
+          "index": 3,
+          "name": "limit",
+          "type": "i4"
+        }
+      ]
+    },
+    "EmailJournalEntry": {
+      "kind": "Msg",
+      "nextIndex": 5,
+      "fields": [
+        {
+          "index": 0,
+          "name": "userId",
+          "type": "Maybe\u003Cguid\u003E"
+        },
+        {
+          "index": 1,
+          "name": "kind",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "sentAt",
+          "type": "datetime"
+        },
+        {
+          "index": 3,
+          "name": "delivered",
+          "type": "bool"
+        },
+        {
+          "index": 4,
+          "name": "error",
+          "type": "Maybe\u003Cstring\u003E"
+        }
+      ]
+    },
+    "InFlightDeletionPage": {
+      "kind": "Msg",
+      "nextIndex": 5,
+      "fields": [
+        {
+          "index": 0,
+          "name": "entries",
+          "type": "Array\u003CInFlightDeletionEntry\u003E"
+        },
+        {
+          "index": 1,
+          "name": "totalCount",
+          "type": "i4"
+        },
+        {
+          "index": 2,
+          "name": "failedCount",
+          "type": "i4"
+        },
+        {
+          "index": 3,
+          "name": "offset",
+          "type": "i4"
+        },
+        {
+          "index": 4,
+          "name": "limit",
+          "type": "i4"
+        }
+      ]
+    },
+    "InFlightDeletionEntry": {
+      "kind": "Msg",
+      "nextIndex": 10,
+      "fields": [
+        {
+          "index": 0,
+          "name": "userId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "username",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "displayName",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "email",
+          "type": "string"
+        },
+        {
+          "index": 4,
+          "name": "status",
+          "type": "AccountDeletionStatusView"
+        },
+        {
+          "index": 5,
+          "name": "armedAt",
+          "type": "datetime"
+        },
+        {
+          "index": 6,
+          "name": "executionAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 7,
+          "name": "selfRequested",
+          "type": "bool"
+        },
+        {
+          "index": 8,
+          "name": "failureReason",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 9,
+          "name": "executionAttempts",
+          "type": "i4"
+        }
+      ]
+    },
     "AccountDeletionImpact": {
       "kind": "Msg",
       "nextIndex": 27,
@@ -4054,7 +4198,7 @@
     },
     "AutoDeleteScanStatus": {
       "kind": "Msg",
-      "nextIndex": 15,
+      "nextIndex": 16,
       "fields": [
         {
           "index": 0,
@@ -4130,6 +4274,11 @@
           "index": 14,
           "name": "lastErrorAt",
           "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 15,
+          "name": "defaultThresholdMonths",
+          "type": "i4"
         }
       ]
     },
@@ -5280,6 +5429,43 @@
         "RunAutoDeleteScan": {
           "args": [],
           "returns": "AutoDeleteScanStatus",
+          "modifiers": []
+        },
+        "GetDeletionsInFlight": {
+          "args": [
+            {
+              "index": 0,
+              "name": "offset",
+              "type": "i4"
+            },
+            {
+              "index": 1,
+              "name": "limit",
+              "type": "i4"
+            }
+          ],
+          "returns": "InFlightDeletionPage",
+          "modifiers": []
+        },
+        "GetEmailJournal": {
+          "args": [
+            {
+              "index": 0,
+              "name": "userId",
+              "type": "Maybe\u003Cguid\u003E"
+            },
+            {
+              "index": 1,
+              "name": "offset",
+              "type": "i4"
+            },
+            {
+              "index": 2,
+              "name": "limit",
+              "type": "i4"
+            }
+          ],
+          "returns": "EmailJournalPage",
           "modifiers": []
         },
         "GetAccountDeletionImpact": {

@@ -159,6 +159,16 @@ service AdminConsole() {
     // below are a query each, and an operator wants them for the account they are deciding about, not
     // for the whole page. It is also the only place the private spaces that go with the account are
     // named before they go.
+    // The erasures actually under way right now, whoever started them — an operator's approval and a
+    // person deleting their own account from the console end up in the same place, and only this lists
+    // both. The count is the number worth watching; the page is what it is made of.
+    GetDeletionsInFlight(offset: i4, limit: i4): InFlightDeletionPage;
+
+    // What the platform mailed, for a fortnight. Pass a userId for one account's mail, or nothing for
+    // everything. Deliberately holds no address, no subject and no body: an account id, which template
+    // it was, when, and whether it left the building.
+    GetEmailJournal(userId: guid?, offset: i4, limit: i4): EmailJournalPage;
+
     GetAccountDeletionImpact(userId: guid): AccountDeletionImpact;
 
     StartAccountDeletion(userId: guid): UserActionResult;
@@ -1314,6 +1324,55 @@ msg StrandedAccountDeletion {
     executionAttempts: i4;
 }
 
+msg EmailJournalPage {
+    entries: EmailJournalEntry[];
+
+    // How many the journal holds for this scope, which is at most a fortnight's worth.
+    totalCount: i8;
+    offset: i4;
+    limit: i4;
+}
+
+msg EmailJournalEntry {
+    // Null when the address belonged to nobody yet — an invitation to somebody who is not an account.
+    userId: guid?;
+
+    // Which message it was, which is also why it was sent: the EmailKinds name.
+    kind: string;
+    sentAt: datetime;
+    delivered: bool;
+    error: string?;
+}
+
+msg InFlightDeletionPage {
+    entries: InFlightDeletionEntry[];
+    totalCount: i4;
+
+    // Of those, the ones that stopped part-way and are waiting for somebody.
+    failedCount: i4;
+    offset: i4;
+    limit: i4;
+}
+
+msg InFlightDeletionEntry {
+    userId: guid;
+
+    // Blank once the erasure has run its anonymise step, which is the third of eleven: the row is
+    // still there and the account is still being worked on, but its name and address are already gone.
+    username: string;
+    displayName: string;
+    email: string;
+
+    status: AccountDeletionStatusView;
+    armedAt: datetime;
+    executionAt: datetime?;
+
+    // The account asked for this itself, rather than an operator approving an inactivity proposal.
+    selfRequested: bool;
+    failureReason: string?;
+    executionAttempts: i4;
+}
+
 msg AccountDeletionImpact {
     userId: guid;
     found: bool;
@@ -1379,6 +1438,11 @@ msg AutoDeleteScanStatus {
     lastQueueLength: i4;
     lastError: string?;
     lastErrorAt: datetime?;
+
+    // Appended rather than placed with the other settings: field order is wire identity, and inserting
+    // one renumbers every field after it. The platform's inactivity threshold for accounts that never
+    // chose one, and the answer to "why is the queue so short" nearly every time that is asked.
+    defaultThresholdMonths: i4;
 }
 
 msg StrandedAccountDeletionPage {
