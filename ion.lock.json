@@ -3911,6 +3911,147 @@
         }
       ]
     },
+    "AccountDeletionImpact": {
+      "kind": "Msg",
+      "nextIndex": 27,
+      "fields": [
+        {
+          "index": 0,
+          "name": "userId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "found",
+          "type": "bool"
+        },
+        {
+          "index": 2,
+          "name": "username",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "displayName",
+          "type": "string"
+        },
+        {
+          "index": 4,
+          "name": "email",
+          "type": "string"
+        },
+        {
+          "index": 5,
+          "name": "createdAt",
+          "type": "datetime"
+        },
+        {
+          "index": 6,
+          "name": "lastActivityAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 7,
+          "name": "lastLoginAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 8,
+          "name": "lastMessageAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 9,
+          "name": "thresholdMonths",
+          "type": "i4"
+        },
+        {
+          "index": 10,
+          "name": "autoDeleteChosen",
+          "type": "bool"
+        },
+        {
+          "index": 11,
+          "name": "hasActiveSubscription",
+          "type": "bool"
+        },
+        {
+          "index": 12,
+          "name": "isLocked",
+          "type": "bool"
+        },
+        {
+          "index": 13,
+          "name": "isBot",
+          "type": "bool"
+        },
+        {
+          "index": 14,
+          "name": "spacesDeleted",
+          "type": "i4"
+        },
+        {
+          "index": 15,
+          "name": "spacesDeletedNames",
+          "type": "Array\u003Cstring\u003E"
+        },
+        {
+          "index": 16,
+          "name": "communitiesOwned",
+          "type": "i4"
+        },
+        {
+          "index": 17,
+          "name": "communitiesOwnedNames",
+          "type": "Array\u003Cstring\u003E"
+        },
+        {
+          "index": 18,
+          "name": "memberships",
+          "type": "i4"
+        },
+        {
+          "index": 19,
+          "name": "messages",
+          "type": "i4"
+        },
+        {
+          "index": 20,
+          "name": "files",
+          "type": "i4"
+        },
+        {
+          "index": 21,
+          "name": "conversations",
+          "type": "i4"
+        },
+        {
+          "index": 22,
+          "name": "botsOwned",
+          "type": "i4"
+        },
+        {
+          "index": 23,
+          "name": "deletionStatus",
+          "type": "AccountDeletionStatusView"
+        },
+        {
+          "index": 24,
+          "name": "scheduledAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 25,
+          "name": "executionAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 26,
+          "name": "blockedBy",
+          "type": "Maybe\u003Cstring\u003E"
+        }
+      ]
+    },
     "AutoDeleteScanStatus": {
       "kind": "Msg",
       "nextIndex": 15,
@@ -4102,6 +4243,17 @@
         "APPROVED": "1",
         "STRANDED": "2",
         "COMPLETED": "3"
+      },
+      "baseType": "u4"
+    },
+    "AccountDeletionStatusView": {
+      "kind": "Enum",
+      "members": {
+        "NONE": "0",
+        "SCHEDULED": "1",
+        "EXECUTING": "2",
+        "COMPLETED": "3",
+        "FAILED": "4"
       },
       "baseType": "u4"
     },
@@ -5128,6 +5280,17 @@
         "RunAutoDeleteScan": {
           "args": [],
           "returns": "AutoDeleteScanStatus",
+          "modifiers": []
+        },
+        "GetAccountDeletionImpact": {
+          "args": [
+            {
+              "index": 0,
+              "name": "userId",
+              "type": "guid"
+            }
+          ],
+          "returns": "AccountDeletionImpact",
           "modifiers": []
         },
         "StartAccountDeletion": {

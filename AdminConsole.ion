@@ -155,6 +155,12 @@ service AdminConsole() {
     //
     // Every bar still stands for all three — a bot or the platform account, a live subscription, an
     // owned space, a standing lockdown — and all three are audited.
+    // What erasing one account would actually destroy, read on demand rather than per row: the counts
+    // below are a query each, and an operator wants them for the account they are deciding about, not
+    // for the whole page. It is also the only place the private spaces that go with the account are
+    // named before they go.
+    GetAccountDeletionImpact(userId: guid): AccountDeletionImpact;
+
     StartAccountDeletion(userId: guid): UserActionResult;
     ExpireAccountDeletionGrace(userId: guid): UserActionResult;
     EraseAccountNow(userId: guid): UserActionResult;
@@ -1306,6 +1312,55 @@ msg StrandedAccountDeletion {
     // The failure the last attempt ended on, and how many attempts were spent reaching it.
     failureReason: string?;
     executionAttempts: i4;
+}
+
+msg AccountDeletionImpact {
+    userId: guid;
+    found: bool;
+    username: string;
+    displayName: string;
+    email: string;
+    createdAt: datetime;
+
+    // The three dates the sweep's arithmetic is made of: it measures from the later of the last login
+    // and the last message, and falls back to the creation date when there is neither.
+    lastActivityAt: datetime?;
+    lastLoginAt: datetime?;
+    lastMessageAt: datetime?;
+    thresholdMonths: i4;
+    autoDeleteChosen: bool;
+
+    hasActiveSubscription: bool;
+    isLocked: bool;
+    isBot: bool;
+
+    // What the erasure takes. Private spaces are deleted with the account; communities bar it instead,
+    // and are listed so an operator can say what has to be handed over first.
+    spacesDeleted: i4;
+    spacesDeletedNames: string[];
+    communitiesOwned: i4;
+    communitiesOwnedNames: string[];
+    memberships: i4;
+    messages: i4;
+    files: i4;
+    conversations: i4;
+    botsOwned: i4;
+
+    // The deletion this account already has, if any.
+    deletionStatus: AccountDeletionStatusView;
+    scheduledAt: datetime?;
+    executionAt: datetime?;
+
+    // The bar that would refuse a deletion asked for right now, or null if none would.
+    blockedBy: string?;
+}
+
+enum AccountDeletionStatusView {
+    NONE,
+    SCHEDULED,
+    EXECUTING,
+    COMPLETED,
+    FAILED
 }
 
 msg AutoDeleteScanStatus {
