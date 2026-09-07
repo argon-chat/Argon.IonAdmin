@@ -123,6 +123,19 @@ service AdminConsole() {
     ApproveAccountDeletion(userId: guid): UserActionResult;
     RejectAccountDeletion(userId: guid): UserActionResult;
 
+    // The erasures that stopped half way. A deletion that spends its execution attempts unregisters its
+    // own poll and is never picked up again, leaving an account anonymised but not finished — memberships
+    // still live, credentials and devices still held, file references half released. Nobody could see
+    // that: the account holder cannot sign in to ask (the erasure took their password and address on its
+    // third step), and the queue used to drop the entry as soon as the deletion stopped running.
+    //
+    // These two are the way back in. The page lists what is stranded, with the failure and how many
+    // attempts it took; resuming clears the attempt count and arms the deletion to carry on from the step
+    // it reached — no step that already ran is repeated, which matters because a released file reference
+    // cannot be released again. Resuming is audited like approving: it finishes an irreversible act.
+    GetStrandedAccountDeletions(offset: i4, limit: i4): StrandedAccountDeletionPage;
+    ResumeAccountDeletion(userId: guid): UserActionResult;
+
     GetTenantDirectory(): TenantDirectoryList;
     CreateTenant(input: CreateTenantInput): TenantActionResult;
     UpdateTenant(input: UpdateTenantInput): TenantActionResult;
@@ -1196,12 +1209,64 @@ msg AccountDeletionQueueEntry {
     // When an approved deletion executes. The account can still cancel it from its own console
     // until then.
     scheduledDeletionAt: datetime?;
+    // Set when the erasure this entry authorised stopped with steps left undone and nothing will pick
+    // it up again. Null on every healthy entry. It is on the queue page as well as on its own page
+    // because an operator scanning their own approvals should not have to visit a second screen to
+    // find out that one of them broke.
+    strandedSince: datetime?;
 }
 
 enum AccountDeletionQueueEntryState {
     // Waiting for an operator.
     PENDING,
-    // Approved and scheduled. The entry stays until that deletion is over — executed, or cancelled
-    // by the account holder inside the grace period.
-    APPROVED
+    // Approved, and the deletion it authorised is scheduled or running. The entry stays until that
+    // deletion is over — executed, or cancelled by the account holder inside the grace period.
+    APPROVED,
+    // That deletion started and gave up with steps left undone, and nothing will pick it up on its
+    // own: the account is anonymised but not finished, and only an operator's Resume moves it.
+    //
+    // Appended rather than folded into APPROVED (defect F9). The earlier reading here was that
+    // `strandedSince` said the same thing additively and that a third member would break every
+    // reader. What the flattening actually cost was the queue page: `ListAsync` deliberately sorts
+    // stranded entries into the middle band because they are work owed, and then the wire rendered
+    // them APPROVED — so an operator reading a state badge saw erasures that had given up days ago
+    // sitting among approvals that were progressing normally, and the only signal that anything was
+    // wrong was a non-null `strandedSince` that a state badge does not look at.
+    //
+    // Appending is the safe half of the enum contract and inserting is the unsafe half: the readers
+    // this ionc generates carry open-enum helpers on both sides (`Ion_..._OpenEnum.isKnown` /
+    // `unknownValue`) and decode an undeclared ordinal verbatim rather than rejecting it, which is
+    // what DataExportError.ACCOUNT_DELETION_SCHEDULED already relies on. ION0070 still fires — it
+    // speaks for readers generated before that support, which can fault on an unknown value — and
+    // the `--update-lock` that clears it is the promise that every reader is regenerated. The
+    // operator console is a separate repository and has to be regenerated with this change; the
+    // account and desktop clients never see this enum.
+    STRANDED
+}
+
+// One erasure that gave up half way, and everything an operator needs before deciding to resume it.
+// The account row it names is a tombstone by now — the erasure anonymises before it does the wide
+// work — so the identity fields read "Deleted Account" and a deleted_… username. That is the point:
+// the person cannot ask about this account any more, so somebody has to be able to see it.
+msg StrandedAccountDeletion {
+    userId: guid;
+    username: string;
+    displayName: string;
+    email: string;
+    approvedByOperatorId: guid?;
+    approvedByOperatorEmail: string?;
+    approvedAt: datetime?;
+    // When the erasure was due to run, and when the queue first saw that it had stopped.
+    scheduledDeletionAt: datetime?;
+    strandedSince: datetime?;
+    // The failure the last attempt ended on, and how many attempts were spent reaching it.
+    failureReason: string?;
+    executionAttempts: i4;
+}
+
+msg StrandedAccountDeletionPage {
+    entries: StrandedAccountDeletion[];
+    totalCount: i4;
+    offset: i4;
+    limit: i4;
 }

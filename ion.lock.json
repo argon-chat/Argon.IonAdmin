@@ -3771,7 +3771,7 @@
     },
     "AccountDeletionQueueEntry": {
       "kind": "Msg",
-      "nextIndex": 13,
+      "nextIndex": 14,
       "fields": [
         {
           "index": 0,
@@ -3837,6 +3837,98 @@
           "index": 12,
           "name": "scheduledDeletionAt",
           "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 13,
+          "name": "strandedSince",
+          "type": "Maybe\u003Cdatetime\u003E"
+        }
+      ]
+    },
+    "StrandedAccountDeletion": {
+      "kind": "Msg",
+      "nextIndex": 11,
+      "fields": [
+        {
+          "index": 0,
+          "name": "userId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "username",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "displayName",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "email",
+          "type": "string"
+        },
+        {
+          "index": 4,
+          "name": "approvedByOperatorId",
+          "type": "Maybe\u003Cguid\u003E"
+        },
+        {
+          "index": 5,
+          "name": "approvedByOperatorEmail",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 6,
+          "name": "approvedAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 7,
+          "name": "scheduledDeletionAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 8,
+          "name": "strandedSince",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 9,
+          "name": "failureReason",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 10,
+          "name": "executionAttempts",
+          "type": "i4"
+        }
+      ]
+    },
+    "StrandedAccountDeletionPage": {
+      "kind": "Msg",
+      "nextIndex": 4,
+      "fields": [
+        {
+          "index": 0,
+          "name": "entries",
+          "type": "Array\u003CStrandedAccountDeletion\u003E"
+        },
+        {
+          "index": 1,
+          "name": "totalCount",
+          "type": "i4"
+        },
+        {
+          "index": 2,
+          "name": "offset",
+          "type": "i4"
+        },
+        {
+          "index": 3,
+          "name": "limit",
+          "type": "i4"
         }
       ]
     },
@@ -3921,7 +4013,8 @@
       "kind": "Enum",
       "members": {
         "PENDING": "0",
-        "APPROVED": "1"
+        "APPROVED": "1",
+        "STRANDED": "2"
       },
       "baseType": "u4"
     },
@@ -4903,6 +4996,33 @@
           "modifiers": []
         },
         "RejectAccountDeletion": {
+          "args": [
+            {
+              "index": 0,
+              "name": "userId",
+              "type": "guid"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "GetStrandedAccountDeletions": {
+          "args": [
+            {
+              "index": 0,
+              "name": "offset",
+              "type": "i4"
+            },
+            {
+              "index": 1,
+              "name": "limit",
+              "type": "i4"
+            }
+          ],
+          "returns": "StrandedAccountDeletionPage",
+          "modifiers": []
+        },
+        "ResumeAccountDeletion": {
           "args": [
             {
               "index": 0,
