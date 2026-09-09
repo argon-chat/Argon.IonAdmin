@@ -2241,7 +2241,7 @@
     },
     "AdminSpaceCard": {
       "kind": "Msg",
-      "nextIndex": 18,
+      "nextIndex": 20,
       "fields": [
         {
           "index": 0,
@@ -2332,6 +2332,16 @@
           "index": 17,
           "name": "recentInvites",
           "type": "Array\u003CAdminInviteInfo\u003E"
+        },
+        {
+          "index": 18,
+          "name": "isVerified",
+          "type": "Maybe\u003Cbool\u003E"
+        },
+        {
+          "index": 19,
+          "name": "isOfficial",
+          "type": "Maybe\u003Cbool\u003E"
         }
       ]
     },
@@ -4983,6 +4993,38 @@
             }
           ],
           "returns": "AdminSpaceMemberPage",
+          "modifiers": []
+        },
+        "SetSpaceCommunity": {
+          "args": [
+            {
+              "index": 0,
+              "name": "spaceId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "isCommunity",
+              "type": "bool"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "SetSpaceOfficial": {
+          "args": [
+            {
+              "index": 0,
+              "name": "spaceId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "isOfficial",
+              "type": "bool"
+            }
+          ],
+          "returns": "UserActionResult",
           "modifiers": []
         },
         "CancelUserSubscription": {

@@ -71,6 +71,13 @@ service AdminConsole() {
     GetSpaceCard(spaceId: guid): AdminSpaceCard;
     GetSpaceMembers(spaceId: guid, offset: i4, limit: i4): AdminSpaceMemberPage;
 
+    // The two platform-controlled space flags an operator can flip. Community changes how the space
+    // behaves (deletion grace, who may report it, the tag members see); Official is a badge and
+    // nothing else. Both push a SpaceDetailsUpdated to everyone in the space, so a flip lands
+    // without a reconnect.
+    SetSpaceCommunity(spaceId: guid, isCommunity: bool): UserActionResult;
+    SetSpaceOfficial(spaceId: guid, isOfficial: bool): UserActionResult;
+
     CancelUserSubscription(userId: guid): UserActionResult;
     ExpireUserSubscription(userId: guid): UserActionResult;
     GrantPremium(userId: guid, tier: UltimaPlan, durationDays: i4): UserActionResult;
@@ -816,6 +823,11 @@ msg AdminSpaceCard {
     archetypes: AdminArchetypeInfo[];
     installedBots: AdminSpaceBotInfo[];
     recentInvites: AdminInviteInfo[];
+    // Appended rather than slotted next to isCommunity: field order is the wire order here, and
+    // nullable because a required field added to an existing message breaks readers built against
+    // the previous schema. Absent means false.
+    isVerified: bool?;
+    isOfficial: bool?;
 }
 
 msg AdminChannelInfo {
