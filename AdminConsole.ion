@@ -187,6 +187,82 @@ service AdminConsole() {
     UpdateTenant(input: UpdateTenantInput): TenantActionResult;
     SetTenantVerified(tenantId: guid, isVerified: bool): TenantActionResult;
     DeleteTenant(tenantId: guid): TenantActionResult;
+
+    // Profile cosmetics. Three switches, and they are not the same switch:
+    //
+    //   a kind EXISTS    because a file in the build declares it. Nothing here can create or destroy
+    //                    one; GetCosmeticKinds reports what the build has.
+    //   a kind is ENABLED through a feature flag. SetCosmeticKindEnabled is that switch — it resolves
+    //                    the flag from the registry and writes it, so nobody has to type
+    //                    'af.cosmetics.profile-badge.active' by hand and get it subtly wrong.
+    //   an ITEM is enabled by its own row, which is the one-cosmetic kill switch.
+    //
+    // Turning a kind off hides every item of it and unequips nothing. The rows stay, and turning it
+    // back on restores what people were wearing.
+    GetCosmeticKinds(): CosmeticKindList;
+    SetCosmeticKindEnabled(kindKey: string, isEnabled: bool): UserActionResult;
+
+    // Rows left behind by a kind whose file was deleted. They are already inert — nothing serves or
+    // validates them — so this exists for tidiness and is the only way they ever go, deliberately:
+    // a kind pulled for one release and restored in the next would otherwise take every customer's
+    // equipped item with it.
+    PurgeOrphanedCosmetics(kindKey: string): UserActionResult;
+
+    SearchCosmetics(query: CosmeticQuery): CosmeticPage;
+    GetCosmetic(cosmeticId: guid): CosmeticDetails;
+    CreateCosmetic(input: CreateCosmeticInput): CreateCosmeticResult;
+    UpdateCosmetic(input: UpdateCosmeticInput): UserActionResult;
+
+    // How the thing is come by, and — when it is come by through a promo code — which inventory
+    // template a redemption mints. That template is made with CreateItemTemplate above rather than
+    // by a second coupon flow of its own; coupons already redeem into inventory, and two paths that
+    // grant the same cosmetic would drift.
+    SetCosmeticAcquisition(input: CosmeticAcquisitionInput): UserActionResult;
+
+    // What an operator decides about one card on the profile board: whether it may be had more than
+    // once, and the size it is created at.
+    //
+    // Separate from UpdateCosmetic because it is refusable on its own terms — a row whose kind draws
+    // no card has nothing to decide — and because the limits it is held to come from the kind rather
+    // than from the input.
+    SetCosmeticBoardPolicy(input: CosmeticBoardPolicyInput): UserActionResult;
+    SetCosmeticEnabled(cosmeticId: guid, isEnabled: bool): UserActionResult;
+
+    // What the row is called, in one language. An upsert: the pair (cosmetic, locale) is the key,
+    // so writing a language twice edits it rather than collecting duplicates.
+    SetCosmeticTranslation(input: CosmeticTranslationInput): UserActionResult;
+
+    // Refused for the fallback language of a published row — it is the one every client falls back
+    // to, and taking it away would make something already on screen nameless.
+    DeleteCosmeticTranslation(cosmeticId: guid, locale: string): UserActionResult;
+
+    // Publication is the gate. It refuses an item whose payload does not fit its kind and an item
+    // whose required assets are missing. There is no way past it, which is the point: a half-built
+    // row cannot reach a client.
+    PublishCosmetic(cosmeticId: guid): PublishCosmeticResult;
+    UnpublishCosmetic(cosmeticId: guid, reason: string): UserActionResult;
+    DeleteCosmetic(cosmeticId: guid): DeleteItemResult;
+
+    BeginUploadCosmeticAsset(cosmeticId: guid, slot: CosmeticAssetSlotKind): UploadFileResult;
+    CompleteUploadCosmeticAsset(cosmeticId: guid, slot: CosmeticAssetSlotKind, blobId: guid): UserActionResult;
+
+    // Records that this row's files went into a client build — after that release is out, not
+    // before. It changes nothing about what the api serves: the same file ids go over the wire,
+    // because the server does not know which build anybody is running. What it changes is the row,
+    // which from then on cannot be deleted, switched off, unpublished or made temporary.
+    //
+    // Only a published row can be marked, and marking clears any availability window it had.
+    // Unmarking is allowed: an operator is entitled to a typo.
+    SetCosmeticShipped(cosmeticId: guid, build: string, shipped: bool): UserActionResult;
+
+    // A batch of single-use codes for one cosmetic, redeemed through the existing coupon machinery:
+    // a code mints the key item into the person's inventory, and using the key is what grants the
+    // cosmetic. The key template has to exist already — it is made by "Make a key".
+    CreateCosmeticCodes(input: CreateCosmeticCodesInput): CreateCosmeticCodesResult;
+
+    GrantCosmetic(userId: guid, cosmeticId: guid, expiresAt: datetime?): UserActionResult;
+    RevokeCosmetic(userId: guid, cosmeticId: guid): UserActionResult;
+    GetUserCosmetics(userId: guid): UserCosmeticList;
 }
 
 msg SearchUserResult {
@@ -377,7 +453,10 @@ enum ItemScenarioKind {
     RedeemCode,
     Premium,
     QualifierBox,
-    Box
+    Box,
+
+    // Using such an item exchanges it for ownership of a cosmetic.
+    Cosmetic
 }
 
 msg CreateItemTemplateInput {
@@ -388,6 +467,11 @@ msg CreateItemTemplateInput {
     ttl: i4?;
     scenarioType: ItemScenarioKind;
     boxContentTemplateIds: string[];
+
+    // Apply only when scenarioType is Cosmetic. An empty duration means the ownership is permanent,
+    // and a number means that many days counted from the moment the key is used.
+    cosmeticId: guid?;
+    cosmeticDurationDays: i4?;
 }
 
 msg CreateItemTemplateResult {
@@ -1462,4 +1546,371 @@ msg StrandedAccountDeletionPage {
     totalCount: i4;
     offset: i4;
     limit: i4;
+}
+
+// ─── Profile cosmetics ───────────────────────────────────────────────────────────────────────────
+
+// What the build ships, plus what earlier builds left behind.
+msg CosmeticKindList {
+    kinds: CosmeticKindInfo[];
+    orphans: CosmeticOrphanInfo[];
+}
+
+// One kind, as declared by its file, with the state of its switch.
+//
+// The descriptive fields — primitive, surfaces, scope, stacking, legacyField — are strings rather
+// than enums on purpose. They are what the console shows an operator about a kind, not something an
+// operator sets, and mirroring five engine enums into this contract would mean every new surface or
+// primitive was a wire change before it was a feature. The fields an operator does set are typed.
+msg CosmeticKindInfo {
+    kindKey: string;
+    description: string?;
+    primitive: string;
+    surfaces: string[];
+    scopes: string[];
+    stacking: string;
+    layer: i4;
+    maxSlots: i4;
+
+    // What this kind's code can draw on the board, which is the ceiling every row of it is held to.
+    // Null for a kind that draws no card.
+    boardCapability: CosmeticBoardCapability?;
+    entitlement: string;
+    legacyField: string?;
+
+    // The flag that gates the whole kind, and what it currently evaluates to for nobody in
+    // particular — the platform default, not any one person's answer.
+    featureFlagKey: string;
+    isEnabled: bool;
+
+    assets: CosmeticAssetRequirementInfo[];
+    itemCount: i4;
+    publishedItemCount: i4;
+}
+
+msg CosmeticAssetRequirementInfo {
+    slot: CosmeticAssetSlotKind;
+    kind: string;
+    maxBytes: i8;
+    isRequired: bool;
+}
+
+// Rows whose kind no longer exists in the build. Inert, listed so somebody can decide.
+msg CosmeticOrphanInfo {
+    kindKey: string;
+    itemCount: i4;
+    equippedCount: i4;
+}
+
+msg CosmeticQuery {
+    kindKey: string?;
+    text: string?;
+    onlyPublished: bool;
+    onlyEnabled: bool;
+    offset: i4;
+    limit: i4;
+
+    // Only rows whose files went into a client build. Answered here rather than filtered in the
+    // console, because a page-local filter over a paged list says "there are no others" when it
+    // means "there are no others on this page".
+    onlyShipped: bool;
+}
+
+msg CosmeticPage {
+    items: CosmeticSummary[];
+    totalCount: i4;
+    offset: i4;
+    limit: i4;
+}
+
+msg CosmeticSummary {
+    cosmeticId: guid;
+    kindKey: string;
+    slug: string;
+    nameKey: string;
+    rarity: string?;
+    version: i4;
+    isEnabled: bool;
+    isPublished: bool;
+    acquisition: CosmeticAcquisitionKind[];
+
+    // Whether publication would get past the asset check as things stand. The console uses it to
+    // mark a draft that still needs a file; the real check runs at publication either way.
+    hasRequiredAssets: bool;
+
+    legacyId: i4?;
+    createdAt: datetime;
+    publishedAt: datetime?;
+
+    // Set once this row's files went into a client build. A shipped row is frozen: it cannot be
+    // deleted, switched off, unpublished or given an availability window, because its files are in
+    // builds that are already out there.
+    shippedInClientAt: datetime?;
+    shippedInClientBuild: string?;
+
+    // The fallback-language name, so a list reads as a person would say it rather than as a key.
+    // Null for a row nobody has named, which after MissingName can only be an unpublished draft.
+    name: string?;
+}
+
+msg CosmeticDetails {
+    cosmeticId: guid;
+    kindKey: string;
+
+    // Null when the kind's file is gone. Everything else on this row still reads, which is what
+    // makes the orphan inspectable rather than a blank page.
+    kind: CosmeticKindInfo?;
+
+    slug: string;
+    nameKey: string;
+    descriptionKey: string?;
+    rarity: string?;
+    sortOrder: i4;
+    version: i4;
+
+    payloadJson: string;
+    payloadIsValid: bool;
+    payloadErrors: string[];
+
+    // What this row offers on the board, resolved against the kind. Null unless it draws a card.
+    board: CosmeticBoardPolicy?;
+
+    assetSource: CosmeticAssetSourceKind;
+    assets: CosmeticAssetInfo[];
+
+    isEnabled: bool;
+    isPublished: bool;
+    publishedAt: datetime?;
+    availableFrom: datetime?;
+    availableUntil: datetime?;
+
+    acquisition: CosmeticAcquisitionKind[];
+    ultimaTierRequired: UltimaPlan?;
+    priceSku: string?;
+    grantItemTemplateId: string?;
+
+    legacyId: i4?;
+    ownerCount: i4;
+    equippedCount: i4;
+    createdAt: datetime;
+
+    // See CosmeticSummary: when this row's files went into a client build, and which one.
+    shippedInClientAt: datetime?;
+    shippedInClientBuild: string?;
+
+    // Every language this row has been named in. The console edits them here; the client picks one.
+    translations: CosmeticTranslationInfo[];
+}
+
+msg CosmeticAssetInfo {
+    slot: CosmeticAssetSlotKind;
+    fileId: string;
+}
+
+// What a cosmetic is called in one language, as the console reads it back. One of these per
+// language an operator has written; the client is sent all of them and picks.
+msg CosmeticTranslationInfo {
+    locale: string;
+    name: string;
+    description: string?;
+}
+
+// One language's wording, on its way in. (cosmetic, locale) is the key, so sending a language a
+// second time corrects it rather than adding a duplicate — the console has no translation id to
+// hold on to, and a correction is the common case.
+msg CosmeticTranslationInput {
+    cosmeticId: guid;
+
+    // Trimmed, lowercased and dash-to-underscore'd server-side, then checked for shape. Not held
+    // to a list: a language the client gains next release is translatable today.
+    locale: string;
+
+    name: string;
+    description: string?;
+}
+
+msg CreateCosmeticCodesInput {
+    cosmeticId: guid;
+
+    // The key item a code mints. Must already be a Cosmetic-scenario template pointing at this same
+    // cosmetic — refused otherwise, because a code that hands out somebody else's key is a code
+    // nobody can explain afterwards.
+    referenceItemTemplateId: string;
+
+    count: i4;
+    validFrom: datetime;
+    validTo: datetime;
+
+    // Prepended to every code, so a batch is recognisable on sight. Empty takes the slug.
+    prefix: string?;
+}
+
+msg CreateCosmeticCodesResult {
+    success: bool;
+    error: string?;
+
+    // Returned once and never again: the console downloads them as a CSV, and nothing here stores
+    // them in a form this screen could show a second time.
+    codes: string[];
+}
+
+msg CreateCosmeticInput {
+    kindKey: string;
+    slug: string;
+    nameKey: string;
+    descriptionKey: string?;
+    rarity: string?;
+    sortOrder: i4;
+    payloadJson: string;
+    assetSource: CosmeticAssetSourceKind;
+
+    // The row's name in the fallback language, written as the row is created. Optional on the wire
+    // and required by the console, because a row created without one cannot be published and there
+    // is no reason to make that a second trip.
+    name: string?;
+    description: string?;
+}
+
+msg CreateCosmeticResult {
+    success: bool;
+    cosmeticId: guid?;
+    error: string?;
+}
+
+// Every field optional: the console edits one thing at a time, and a null here means "leave it".
+// Clearing a value that has one is done by sending an empty string, which is how descriptionKey and
+// rarity are cleared.
+msg CosmeticBoardCapability {
+    maxWidth: i4;
+    minHeight: i4;
+    maxHeight: i4;
+
+    // Narrowest the card may be made — what its editor needs in order to fit.
+    minWidth: i4?;
+}
+
+msg CosmeticBoardPolicy {
+    maxPerBoard: i4;
+    defaultWidth: i4;
+    defaultHeight: i4;
+}
+
+msg UpdateCosmeticInput {
+    cosmeticId: guid;
+    nameKey: string?;
+    descriptionKey: string?;
+    rarity: string?;
+    sortOrder: i4?;
+    payloadJson: string?;
+    availableFrom: datetime?;
+    availableUntil: datetime?;
+
+    // A date says "make it this"; null says "leave it alone" like every other field here. Neither of
+    // them can say "there is no longer a window", so that is a flag of its own — an availability once
+    // set could otherwise only ever be moved, never lifted.
+    clearAvailableFrom: bool;
+    clearAvailableUntil: bool;
+}
+
+msg CosmeticBoardPolicyInput {
+    cosmeticId: guid;
+
+    // Null leaves it at the kind's own ceiling. One makes the card unique. Above the ceiling is
+    // refused rather than quietly clamped: an operator who asked for six of something the code draws
+    // four of should be told.
+    maxPerBoard: i4?;
+
+    // Null takes the kind's smallest. Outside what the kind can draw is refused.
+    defaultWidth: i4?;
+    defaultHeight: i4?;
+}
+
+msg CosmeticAcquisitionInput {
+    cosmeticId: guid;
+    acquisition: CosmeticAcquisitionKind[];
+    ultimaTierRequired: UltimaPlan?;
+    priceSku: string?;
+    grantItemTemplateId: string?;
+}
+
+msg PublishCosmeticResult {
+    success: bool;
+    error: PublishCosmeticError;
+
+    // What exactly was wrong — the missing slot, or the payload's own complaint. The enum says
+    // which gate; this says which value.
+    detail: string?;
+}
+
+enum PublishCosmeticError {
+    None,
+    NotFound,
+    UnknownKind,
+    AlreadyPublished,
+    MissingAsset,
+    PayloadInvalid,
+    MissingName
+}
+
+enum CosmeticAssetSlotKind {
+    Primary,
+    Poster,
+    Small,
+
+    // The second, third and fourth files of a kind built out of several. Ordinal rather than named
+    // after a role: a frame's payload says which slot is the band and which is the piece hung off
+    // it, and a slot called Surround would be one kind's vocabulary in an enum every kind shares.
+    // Mirrors CosmeticAssetSlot on the server, member for member -- without these three an operator
+    // cannot upload a frame's second, third or fourth file at all.
+    Secondary,
+    Tertiary,
+    Quaternary
+}
+
+enum CosmeticAssetSourceKind {
+    Catalogue,
+    UserProvided
+}
+
+enum CosmeticAcquisitionKind {
+    OperatorGrant,
+    PromoCode,
+    UltimaTier,
+    Purchase,
+    Gift,
+
+    // Dropped by a key item from a case; the key's scenario grants it, this only says how it is offered.
+    Drop
+}
+
+msg UserCosmeticList {
+    items: UserCosmeticInfo[];
+}
+
+msg UserCosmeticInfo {
+    cosmeticId: guid;
+    kindKey: string;
+    slug: string;
+    nameKey: string;
+    source: CosmeticOwnershipSourceKind;
+    grantedAt: datetime;
+    expiresAt: datetime?;
+    revokedAt: datetime?;
+    isActive: bool;
+
+    // True for an item the person holds only because their subscription covers it. There is no
+    // ownership row behind one of these, so it cannot be revoked here — it lapses with the
+    // subscription and comes back when the subscription does.
+    viaSubscription: bool;
+}
+
+enum CosmeticOwnershipSourceKind {
+    OperatorGrant,
+    PromoCode,
+    Purchase,
+    Gift,
+    Subscription,
+
+    // Arrived through the item machinery — a case key, a code, or a gift; origin lives on the item.
+    Item
 }
