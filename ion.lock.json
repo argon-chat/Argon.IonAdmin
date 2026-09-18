@@ -670,7 +670,7 @@
     },
     "CreateItemTemplateInput": {
       "kind": "Msg",
-      "nextIndex": 7,
+      "nextIndex": 9,
       "fields": [
         {
           "index": 0,
@@ -706,6 +706,16 @@
           "index": 6,
           "name": "boxContentTemplateIds",
           "type": "Array\u003Cstring\u003E"
+        },
+        {
+          "index": 7,
+          "name": "cosmeticId",
+          "type": "Maybe\u003Cguid\u003E"
+        },
+        {
+          "index": 8,
+          "name": "cosmeticDurationDays",
+          "type": "Maybe\u003Ci4\u003E"
         }
       ]
     },
@@ -4318,6 +4328,914 @@
         }
       ]
     },
+    "CosmeticKindList": {
+      "kind": "Msg",
+      "nextIndex": 2,
+      "fields": [
+        {
+          "index": 0,
+          "name": "kinds",
+          "type": "Array\u003CCosmeticKindInfo\u003E"
+        },
+        {
+          "index": 1,
+          "name": "orphans",
+          "type": "Array\u003CCosmeticOrphanInfo\u003E"
+        }
+      ]
+    },
+    "CosmeticKindInfo": {
+      "kind": "Msg",
+      "nextIndex": 16,
+      "fields": [
+        {
+          "index": 0,
+          "name": "kindKey",
+          "type": "string"
+        },
+        {
+          "index": 1,
+          "name": "description",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 2,
+          "name": "primitive",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "surfaces",
+          "type": "Array\u003Cstring\u003E"
+        },
+        {
+          "index": 4,
+          "name": "scopes",
+          "type": "Array\u003Cstring\u003E"
+        },
+        {
+          "index": 5,
+          "name": "stacking",
+          "type": "string"
+        },
+        {
+          "index": 6,
+          "name": "layer",
+          "type": "i4"
+        },
+        {
+          "index": 7,
+          "name": "maxSlots",
+          "type": "i4"
+        },
+        {
+          "index": 8,
+          "name": "boardCapability",
+          "type": "Maybe\u003CCosmeticBoardCapability\u003E"
+        },
+        {
+          "index": 9,
+          "name": "entitlement",
+          "type": "string"
+        },
+        {
+          "index": 10,
+          "name": "legacyField",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 11,
+          "name": "featureFlagKey",
+          "type": "string"
+        },
+        {
+          "index": 12,
+          "name": "isEnabled",
+          "type": "bool"
+        },
+        {
+          "index": 13,
+          "name": "assets",
+          "type": "Array\u003CCosmeticAssetRequirementInfo\u003E"
+        },
+        {
+          "index": 14,
+          "name": "itemCount",
+          "type": "i4"
+        },
+        {
+          "index": 15,
+          "name": "publishedItemCount",
+          "type": "i4"
+        }
+      ]
+    },
+    "CosmeticAssetRequirementInfo": {
+      "kind": "Msg",
+      "nextIndex": 4,
+      "fields": [
+        {
+          "index": 0,
+          "name": "slot",
+          "type": "CosmeticAssetSlotKind"
+        },
+        {
+          "index": 1,
+          "name": "kind",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "maxBytes",
+          "type": "i8"
+        },
+        {
+          "index": 3,
+          "name": "isRequired",
+          "type": "bool"
+        }
+      ]
+    },
+    "CosmeticOrphanInfo": {
+      "kind": "Msg",
+      "nextIndex": 3,
+      "fields": [
+        {
+          "index": 0,
+          "name": "kindKey",
+          "type": "string"
+        },
+        {
+          "index": 1,
+          "name": "itemCount",
+          "type": "i4"
+        },
+        {
+          "index": 2,
+          "name": "equippedCount",
+          "type": "i4"
+        }
+      ]
+    },
+    "CosmeticQuery": {
+      "kind": "Msg",
+      "nextIndex": 7,
+      "fields": [
+        {
+          "index": 0,
+          "name": "kindKey",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 1,
+          "name": "text",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 2,
+          "name": "onlyPublished",
+          "type": "bool"
+        },
+        {
+          "index": 3,
+          "name": "onlyEnabled",
+          "type": "bool"
+        },
+        {
+          "index": 4,
+          "name": "offset",
+          "type": "i4"
+        },
+        {
+          "index": 5,
+          "name": "limit",
+          "type": "i4"
+        },
+        {
+          "index": 6,
+          "name": "onlyShipped",
+          "type": "bool"
+        }
+      ]
+    },
+    "CosmeticPage": {
+      "kind": "Msg",
+      "nextIndex": 4,
+      "fields": [
+        {
+          "index": 0,
+          "name": "items",
+          "type": "Array\u003CCosmeticSummary\u003E"
+        },
+        {
+          "index": 1,
+          "name": "totalCount",
+          "type": "i4"
+        },
+        {
+          "index": 2,
+          "name": "offset",
+          "type": "i4"
+        },
+        {
+          "index": 3,
+          "name": "limit",
+          "type": "i4"
+        }
+      ]
+    },
+    "CosmeticSummary": {
+      "kind": "Msg",
+      "nextIndex": 16,
+      "fields": [
+        {
+          "index": 0,
+          "name": "cosmeticId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "kindKey",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "slug",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "nameKey",
+          "type": "string"
+        },
+        {
+          "index": 4,
+          "name": "rarity",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 5,
+          "name": "version",
+          "type": "i4"
+        },
+        {
+          "index": 6,
+          "name": "isEnabled",
+          "type": "bool"
+        },
+        {
+          "index": 7,
+          "name": "isPublished",
+          "type": "bool"
+        },
+        {
+          "index": 8,
+          "name": "acquisition",
+          "type": "Array\u003CCosmeticAcquisitionKind\u003E"
+        },
+        {
+          "index": 9,
+          "name": "hasRequiredAssets",
+          "type": "bool"
+        },
+        {
+          "index": 10,
+          "name": "legacyId",
+          "type": "Maybe\u003Ci4\u003E"
+        },
+        {
+          "index": 11,
+          "name": "createdAt",
+          "type": "datetime"
+        },
+        {
+          "index": 12,
+          "name": "publishedAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 13,
+          "name": "shippedInClientAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 14,
+          "name": "shippedInClientBuild",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 15,
+          "name": "name",
+          "type": "Maybe\u003Cstring\u003E"
+        }
+      ]
+    },
+    "CosmeticDetails": {
+      "kind": "Msg",
+      "nextIndex": 31,
+      "fields": [
+        {
+          "index": 0,
+          "name": "cosmeticId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "kindKey",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "kind",
+          "type": "Maybe\u003CCosmeticKindInfo\u003E"
+        },
+        {
+          "index": 3,
+          "name": "slug",
+          "type": "string"
+        },
+        {
+          "index": 4,
+          "name": "nameKey",
+          "type": "string"
+        },
+        {
+          "index": 5,
+          "name": "descriptionKey",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 6,
+          "name": "rarity",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 7,
+          "name": "sortOrder",
+          "type": "i4"
+        },
+        {
+          "index": 8,
+          "name": "version",
+          "type": "i4"
+        },
+        {
+          "index": 9,
+          "name": "payloadJson",
+          "type": "string"
+        },
+        {
+          "index": 10,
+          "name": "payloadIsValid",
+          "type": "bool"
+        },
+        {
+          "index": 11,
+          "name": "payloadErrors",
+          "type": "Array\u003Cstring\u003E"
+        },
+        {
+          "index": 12,
+          "name": "board",
+          "type": "Maybe\u003CCosmeticBoardPolicy\u003E"
+        },
+        {
+          "index": 13,
+          "name": "assetSource",
+          "type": "CosmeticAssetSourceKind"
+        },
+        {
+          "index": 14,
+          "name": "assets",
+          "type": "Array\u003CCosmeticAssetInfo\u003E"
+        },
+        {
+          "index": 15,
+          "name": "isEnabled",
+          "type": "bool"
+        },
+        {
+          "index": 16,
+          "name": "isPublished",
+          "type": "bool"
+        },
+        {
+          "index": 17,
+          "name": "publishedAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 18,
+          "name": "availableFrom",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 19,
+          "name": "availableUntil",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 20,
+          "name": "acquisition",
+          "type": "Array\u003CCosmeticAcquisitionKind\u003E"
+        },
+        {
+          "index": 21,
+          "name": "ultimaTierRequired",
+          "type": "Maybe\u003CUltimaPlan\u003E"
+        },
+        {
+          "index": 22,
+          "name": "priceSku",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 23,
+          "name": "grantItemTemplateId",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 24,
+          "name": "legacyId",
+          "type": "Maybe\u003Ci4\u003E"
+        },
+        {
+          "index": 25,
+          "name": "ownerCount",
+          "type": "i4"
+        },
+        {
+          "index": 26,
+          "name": "equippedCount",
+          "type": "i4"
+        },
+        {
+          "index": 27,
+          "name": "createdAt",
+          "type": "datetime"
+        },
+        {
+          "index": 28,
+          "name": "shippedInClientAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 29,
+          "name": "shippedInClientBuild",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 30,
+          "name": "translations",
+          "type": "Array\u003CCosmeticTranslationInfo\u003E"
+        }
+      ]
+    },
+    "CosmeticAssetInfo": {
+      "kind": "Msg",
+      "nextIndex": 2,
+      "fields": [
+        {
+          "index": 0,
+          "name": "slot",
+          "type": "CosmeticAssetSlotKind"
+        },
+        {
+          "index": 1,
+          "name": "fileId",
+          "type": "string"
+        }
+      ]
+    },
+    "CosmeticTranslationInfo": {
+      "kind": "Msg",
+      "nextIndex": 3,
+      "fields": [
+        {
+          "index": 0,
+          "name": "locale",
+          "type": "string"
+        },
+        {
+          "index": 1,
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "description",
+          "type": "Maybe\u003Cstring\u003E"
+        }
+      ]
+    },
+    "CosmeticTranslationInput": {
+      "kind": "Msg",
+      "nextIndex": 4,
+      "fields": [
+        {
+          "index": 0,
+          "name": "cosmeticId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "locale",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "description",
+          "type": "Maybe\u003Cstring\u003E"
+        }
+      ]
+    },
+    "CreateCosmeticCodesInput": {
+      "kind": "Msg",
+      "nextIndex": 6,
+      "fields": [
+        {
+          "index": 0,
+          "name": "cosmeticId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "referenceItemTemplateId",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "count",
+          "type": "i4"
+        },
+        {
+          "index": 3,
+          "name": "validFrom",
+          "type": "datetime"
+        },
+        {
+          "index": 4,
+          "name": "validTo",
+          "type": "datetime"
+        },
+        {
+          "index": 5,
+          "name": "prefix",
+          "type": "Maybe\u003Cstring\u003E"
+        }
+      ]
+    },
+    "CreateCosmeticCodesResult": {
+      "kind": "Msg",
+      "nextIndex": 3,
+      "fields": [
+        {
+          "index": 0,
+          "name": "success",
+          "type": "bool"
+        },
+        {
+          "index": 1,
+          "name": "error",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 2,
+          "name": "codes",
+          "type": "Array\u003Cstring\u003E"
+        }
+      ]
+    },
+    "CreateCosmeticInput": {
+      "kind": "Msg",
+      "nextIndex": 10,
+      "fields": [
+        {
+          "index": 0,
+          "name": "kindKey",
+          "type": "string"
+        },
+        {
+          "index": 1,
+          "name": "slug",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "nameKey",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "descriptionKey",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 4,
+          "name": "rarity",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 5,
+          "name": "sortOrder",
+          "type": "i4"
+        },
+        {
+          "index": 6,
+          "name": "payloadJson",
+          "type": "string"
+        },
+        {
+          "index": 7,
+          "name": "assetSource",
+          "type": "CosmeticAssetSourceKind"
+        },
+        {
+          "index": 8,
+          "name": "name",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 9,
+          "name": "description",
+          "type": "Maybe\u003Cstring\u003E"
+        }
+      ]
+    },
+    "CreateCosmeticResult": {
+      "kind": "Msg",
+      "nextIndex": 3,
+      "fields": [
+        {
+          "index": 0,
+          "name": "success",
+          "type": "bool"
+        },
+        {
+          "index": 1,
+          "name": "cosmeticId",
+          "type": "Maybe\u003Cguid\u003E"
+        },
+        {
+          "index": 2,
+          "name": "error",
+          "type": "Maybe\u003Cstring\u003E"
+        }
+      ]
+    },
+    "CosmeticBoardCapability": {
+      "kind": "Msg",
+      "nextIndex": 4,
+      "fields": [
+        {
+          "index": 0,
+          "name": "maxWidth",
+          "type": "i4"
+        },
+        {
+          "index": 1,
+          "name": "minHeight",
+          "type": "i4"
+        },
+        {
+          "index": 2,
+          "name": "maxHeight",
+          "type": "i4"
+        },
+        {
+          "index": 3,
+          "name": "minWidth",
+          "type": "Maybe\u003Ci4\u003E"
+        }
+      ]
+    },
+    "CosmeticBoardPolicy": {
+      "kind": "Msg",
+      "nextIndex": 3,
+      "fields": [
+        {
+          "index": 0,
+          "name": "maxPerBoard",
+          "type": "i4"
+        },
+        {
+          "index": 1,
+          "name": "defaultWidth",
+          "type": "i4"
+        },
+        {
+          "index": 2,
+          "name": "defaultHeight",
+          "type": "i4"
+        }
+      ]
+    },
+    "UpdateCosmeticInput": {
+      "kind": "Msg",
+      "nextIndex": 10,
+      "fields": [
+        {
+          "index": 0,
+          "name": "cosmeticId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "nameKey",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 2,
+          "name": "descriptionKey",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 3,
+          "name": "rarity",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 4,
+          "name": "sortOrder",
+          "type": "Maybe\u003Ci4\u003E"
+        },
+        {
+          "index": 5,
+          "name": "payloadJson",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 6,
+          "name": "availableFrom",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 7,
+          "name": "availableUntil",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 8,
+          "name": "clearAvailableFrom",
+          "type": "bool"
+        },
+        {
+          "index": 9,
+          "name": "clearAvailableUntil",
+          "type": "bool"
+        }
+      ]
+    },
+    "CosmeticBoardPolicyInput": {
+      "kind": "Msg",
+      "nextIndex": 4,
+      "fields": [
+        {
+          "index": 0,
+          "name": "cosmeticId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "maxPerBoard",
+          "type": "Maybe\u003Ci4\u003E"
+        },
+        {
+          "index": 2,
+          "name": "defaultWidth",
+          "type": "Maybe\u003Ci4\u003E"
+        },
+        {
+          "index": 3,
+          "name": "defaultHeight",
+          "type": "Maybe\u003Ci4\u003E"
+        }
+      ]
+    },
+    "CosmeticAcquisitionInput": {
+      "kind": "Msg",
+      "nextIndex": 5,
+      "fields": [
+        {
+          "index": 0,
+          "name": "cosmeticId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "acquisition",
+          "type": "Array\u003CCosmeticAcquisitionKind\u003E"
+        },
+        {
+          "index": 2,
+          "name": "ultimaTierRequired",
+          "type": "Maybe\u003CUltimaPlan\u003E"
+        },
+        {
+          "index": 3,
+          "name": "priceSku",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 4,
+          "name": "grantItemTemplateId",
+          "type": "Maybe\u003Cstring\u003E"
+        }
+      ]
+    },
+    "PublishCosmeticResult": {
+      "kind": "Msg",
+      "nextIndex": 3,
+      "fields": [
+        {
+          "index": 0,
+          "name": "success",
+          "type": "bool"
+        },
+        {
+          "index": 1,
+          "name": "error",
+          "type": "PublishCosmeticError"
+        },
+        {
+          "index": 2,
+          "name": "detail",
+          "type": "Maybe\u003Cstring\u003E"
+        }
+      ]
+    },
+    "UserCosmeticList": {
+      "kind": "Msg",
+      "nextIndex": 1,
+      "fields": [
+        {
+          "index": 0,
+          "name": "items",
+          "type": "Array\u003CUserCosmeticInfo\u003E"
+        }
+      ]
+    },
+    "UserCosmeticInfo": {
+      "kind": "Msg",
+      "nextIndex": 10,
+      "fields": [
+        {
+          "index": 0,
+          "name": "cosmeticId",
+          "type": "guid"
+        },
+        {
+          "index": 1,
+          "name": "kindKey",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "slug",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "nameKey",
+          "type": "string"
+        },
+        {
+          "index": 4,
+          "name": "source",
+          "type": "CosmeticOwnershipSourceKind"
+        },
+        {
+          "index": 5,
+          "name": "grantedAt",
+          "type": "datetime"
+        },
+        {
+          "index": 6,
+          "name": "expiresAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 7,
+          "name": "revokedAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 8,
+          "name": "isActive",
+          "type": "bool"
+        },
+        {
+          "index": 9,
+          "name": "viaSubscription",
+          "type": "bool"
+        }
+      ]
+    },
     "SearchMatchKind": {
       "kind": "Enum",
       "members": {
@@ -4351,7 +5269,8 @@
         "RedeemCode": "1",
         "Premium": "2",
         "QualifierBox": "3",
-        "Box": "4"
+        "Box": "4",
+        "Cosmetic": "5"
       },
       "baseType": "u4"
     },
@@ -4413,6 +5332,63 @@
         "EXECUTING": "2",
         "COMPLETED": "3",
         "FAILED": "4"
+      },
+      "baseType": "u4"
+    },
+    "PublishCosmeticError": {
+      "kind": "Enum",
+      "members": {
+        "None": "0",
+        "NotFound": "1",
+        "UnknownKind": "2",
+        "AlreadyPublished": "3",
+        "MissingAsset": "4",
+        "PayloadInvalid": "5",
+        "MissingName": "6"
+      },
+      "baseType": "u4"
+    },
+    "CosmeticAssetSlotKind": {
+      "kind": "Enum",
+      "members": {
+        "Primary": "0",
+        "Poster": "1",
+        "Small": "2",
+        "Secondary": "3",
+        "Tertiary": "4",
+        "Quaternary": "5"
+      },
+      "baseType": "u4"
+    },
+    "CosmeticAssetSourceKind": {
+      "kind": "Enum",
+      "members": {
+        "Catalogue": "0",
+        "UserProvided": "1"
+      },
+      "baseType": "u4"
+    },
+    "CosmeticAcquisitionKind": {
+      "kind": "Enum",
+      "members": {
+        "OperatorGrant": "0",
+        "PromoCode": "1",
+        "UltimaTier": "2",
+        "Purchase": "3",
+        "Gift": "4",
+        "Drop": "5"
+      },
+      "baseType": "u4"
+    },
+    "CosmeticOwnershipSourceKind": {
+      "kind": "Enum",
+      "members": {
+        "OperatorGrant": "0",
+        "PromoCode": "1",
+        "Purchase": "2",
+        "Gift": "3",
+        "Subscription": "4",
+        "Item": "5"
       },
       "baseType": "u4"
     },
@@ -5606,6 +6582,302 @@
             }
           ],
           "returns": "TenantActionResult",
+          "modifiers": []
+        },
+        "GetCosmeticKinds": {
+          "args": [],
+          "returns": "CosmeticKindList",
+          "modifiers": []
+        },
+        "SetCosmeticKindEnabled": {
+          "args": [
+            {
+              "index": 0,
+              "name": "kindKey",
+              "type": "string"
+            },
+            {
+              "index": 1,
+              "name": "isEnabled",
+              "type": "bool"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "PurgeOrphanedCosmetics": {
+          "args": [
+            {
+              "index": 0,
+              "name": "kindKey",
+              "type": "string"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "SearchCosmetics": {
+          "args": [
+            {
+              "index": 0,
+              "name": "query",
+              "type": "CosmeticQuery"
+            }
+          ],
+          "returns": "CosmeticPage",
+          "modifiers": []
+        },
+        "GetCosmetic": {
+          "args": [
+            {
+              "index": 0,
+              "name": "cosmeticId",
+              "type": "guid"
+            }
+          ],
+          "returns": "CosmeticDetails",
+          "modifiers": []
+        },
+        "CreateCosmetic": {
+          "args": [
+            {
+              "index": 0,
+              "name": "input",
+              "type": "CreateCosmeticInput"
+            }
+          ],
+          "returns": "CreateCosmeticResult",
+          "modifiers": []
+        },
+        "UpdateCosmetic": {
+          "args": [
+            {
+              "index": 0,
+              "name": "input",
+              "type": "UpdateCosmeticInput"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "SetCosmeticAcquisition": {
+          "args": [
+            {
+              "index": 0,
+              "name": "input",
+              "type": "CosmeticAcquisitionInput"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "SetCosmeticBoardPolicy": {
+          "args": [
+            {
+              "index": 0,
+              "name": "input",
+              "type": "CosmeticBoardPolicyInput"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "SetCosmeticEnabled": {
+          "args": [
+            {
+              "index": 0,
+              "name": "cosmeticId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "isEnabled",
+              "type": "bool"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "SetCosmeticTranslation": {
+          "args": [
+            {
+              "index": 0,
+              "name": "input",
+              "type": "CosmeticTranslationInput"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "DeleteCosmeticTranslation": {
+          "args": [
+            {
+              "index": 0,
+              "name": "cosmeticId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "locale",
+              "type": "string"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "PublishCosmetic": {
+          "args": [
+            {
+              "index": 0,
+              "name": "cosmeticId",
+              "type": "guid"
+            }
+          ],
+          "returns": "PublishCosmeticResult",
+          "modifiers": []
+        },
+        "UnpublishCosmetic": {
+          "args": [
+            {
+              "index": 0,
+              "name": "cosmeticId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "reason",
+              "type": "string"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "DeleteCosmetic": {
+          "args": [
+            {
+              "index": 0,
+              "name": "cosmeticId",
+              "type": "guid"
+            }
+          ],
+          "returns": "DeleteItemResult",
+          "modifiers": []
+        },
+        "BeginUploadCosmeticAsset": {
+          "args": [
+            {
+              "index": 0,
+              "name": "cosmeticId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "slot",
+              "type": "CosmeticAssetSlotKind"
+            }
+          ],
+          "returns": "UploadFileResult",
+          "modifiers": []
+        },
+        "CompleteUploadCosmeticAsset": {
+          "args": [
+            {
+              "index": 0,
+              "name": "cosmeticId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "slot",
+              "type": "CosmeticAssetSlotKind"
+            },
+            {
+              "index": 2,
+              "name": "blobId",
+              "type": "guid"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "SetCosmeticShipped": {
+          "args": [
+            {
+              "index": 0,
+              "name": "cosmeticId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "build",
+              "type": "string"
+            },
+            {
+              "index": 2,
+              "name": "shipped",
+              "type": "bool"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "CreateCosmeticCodes": {
+          "args": [
+            {
+              "index": 0,
+              "name": "input",
+              "type": "CreateCosmeticCodesInput"
+            }
+          ],
+          "returns": "CreateCosmeticCodesResult",
+          "modifiers": []
+        },
+        "GrantCosmetic": {
+          "args": [
+            {
+              "index": 0,
+              "name": "userId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "cosmeticId",
+              "type": "guid"
+            },
+            {
+              "index": 2,
+              "name": "expiresAt",
+              "type": "Maybe\u003Cdatetime\u003E"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "RevokeCosmetic": {
+          "args": [
+            {
+              "index": 0,
+              "name": "userId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "cosmeticId",
+              "type": "guid"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "GetUserCosmetics": {
+          "args": [
+            {
+              "index": 0,
+              "name": "userId",
+              "type": "guid"
+            }
+          ],
+          "returns": "UserCosmeticList",
           "modifiers": []
         }
       }
