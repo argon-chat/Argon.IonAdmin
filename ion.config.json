@@ -13,8 +13,7 @@
                 "server",
                 "client",
                 "models"
-            ],
-            "outputs": "./../Argon.CodeGenAdmin/"
+            ]
         },
         "browser": {
             "outputFile": "./../src/lib/glue/argonControl.ts",
