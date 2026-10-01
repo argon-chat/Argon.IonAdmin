@@ -1,4 +1,4 @@
-#import { LockdownReason, ArgonUserProfile, ArgonEntitlement, UserFlag, ChannelType, UltimaPlan, UltimaSubscriptionStatus, BoostSource, UploadFileResult, ArgonAuthMode, OtpMethod, ReportTarget, ReportCategory, ReportReason, ReportStatus } from "argon";
+#import { LockdownReason, ArgonUserProfile, ArgonEntitlement, UserFlag, ChannelType, UltimaPlan, UltimaSubscriptionStatus, BoostSource, UploadFileResult, ArgonAuthMode, OtpMethod, ReportTarget, ReportCategory, ReportReason, ReportStatus, ConnectionProvider, ConnectionStatus } from "argon";
 
 
 service AdminConsole() {
@@ -38,7 +38,14 @@ service AdminConsole() {
     GetDeviceAccounts(deviceId: guid): DeviceAccountList;
     BanDevice(deviceId: guid, reason: string, expiration: datetime?): UserActionResult;
     UnbanDevice(deviceId: guid): UserActionResult;
-    
+
+    // A user's linked external accounts, for abuse and impersonation cases. Suspending hides one
+    // everywhere and stops its status poller while keeping the row, so the same external account
+    // cannot simply be linked again; force-unlinking revokes at the provider and drops the row.
+    GetUserConnections(userId: guid): AdminUserConnectionList;
+    SetConnectionSuspended(userId: guid, provider: ConnectionProvider, suspended: bool): UserActionResult;
+    ForceUnlinkConnection(userId: guid, provider: ConnectionProvider): UserActionResult;
+
     GetDiagnostics(): DiagnosticsResult;
     
     GetOperators(): OperatorList;
@@ -1211,6 +1218,27 @@ msg DeviceSummary {
 
 msg DeviceList {
     devices: DeviceSummary[];
+}
+
+// One linked account as an operator sees it: the identity, how it is shown, and what last went
+// wrong with it. Never a token.
+msg AdminUserConnection {
+    provider: ConnectionProvider;
+    externalId: string;
+    name: string;
+    url: string?;
+    status: ConnectionStatus;
+    displayOnProfile: bool;
+    displayAsStatus: bool;
+    scopes: string;
+    linkedAt: datetime;
+    detailsRefreshedAt: datetime?;
+    lastError: string?;
+    lastErrorAt: datetime?;
+}
+
+msg AdminUserConnectionList {
+    connections: AdminUserConnection[];
 }
 
 msg DeviceAccount {

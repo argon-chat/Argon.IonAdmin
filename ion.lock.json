@@ -3701,6 +3701,83 @@
         }
       ]
     },
+    "AdminUserConnection": {
+      "kind": "Msg",
+      "nextIndex": 12,
+      "fields": [
+        {
+          "index": 0,
+          "name": "provider",
+          "type": "ConnectionProvider"
+        },
+        {
+          "index": 1,
+          "name": "externalId",
+          "type": "string"
+        },
+        {
+          "index": 2,
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "index": 3,
+          "name": "url",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 4,
+          "name": "status",
+          "type": "ConnectionStatus"
+        },
+        {
+          "index": 5,
+          "name": "displayOnProfile",
+          "type": "bool"
+        },
+        {
+          "index": 6,
+          "name": "displayAsStatus",
+          "type": "bool"
+        },
+        {
+          "index": 7,
+          "name": "scopes",
+          "type": "string"
+        },
+        {
+          "index": 8,
+          "name": "linkedAt",
+          "type": "datetime"
+        },
+        {
+          "index": 9,
+          "name": "detailsRefreshedAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        },
+        {
+          "index": 10,
+          "name": "lastError",
+          "type": "Maybe\u003Cstring\u003E"
+        },
+        {
+          "index": 11,
+          "name": "lastErrorAt",
+          "type": "Maybe\u003Cdatetime\u003E"
+        }
+      ]
+    },
+    "AdminUserConnectionList": {
+      "kind": "Msg",
+      "nextIndex": 1,
+      "fields": [
+        {
+          "index": 0,
+          "name": "connections",
+          "type": "Array\u003CAdminUserConnection\u003E"
+        }
+      ]
+    },
     "DeviceAccount": {
       "kind": "Msg",
       "nextIndex": 7,
@@ -4677,6 +4754,54 @@
               "index": 0,
               "name": "deviceId",
               "type": "guid"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "GetUserConnections": {
+          "args": [
+            {
+              "index": 0,
+              "name": "userId",
+              "type": "guid"
+            }
+          ],
+          "returns": "AdminUserConnectionList",
+          "modifiers": []
+        },
+        "SetConnectionSuspended": {
+          "args": [
+            {
+              "index": 0,
+              "name": "userId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "provider",
+              "type": "ConnectionProvider"
+            },
+            {
+              "index": 2,
+              "name": "suspended",
+              "type": "bool"
+            }
+          ],
+          "returns": "UserActionResult",
+          "modifiers": []
+        },
+        "ForceUnlinkConnection": {
+          "args": [
+            {
+              "index": 0,
+              "name": "userId",
+              "type": "guid"
+            },
+            {
+              "index": 1,
+              "name": "provider",
+              "type": "ConnectionProvider"
             }
           ],
           "returns": "UserActionResult",
